@@ -27,6 +27,131 @@ const CORE_STACK_ITEMS = [
   "WebRTC",
   "CI/CD",
 ];
+const CHIP_PARTS = [
+  { id: "camera", kind: "chip-camera-module", variant: "camera" },
+  { id: "board", kind: "chip-motherboard", variant: "board" },
+  { id: "battery", kind: "chip-battery", variant: "battery" },
+  { id: "screen", kind: "chip-screen-layer", variant: "screen" },
+  { id: "core", kind: "chip-core-processor", variant: "core" },
+  { id: "lens", kind: "chip-lens-ring", variant: "lens" },
+  { id: "connector1", kind: "chip-connector", variant: "connector" },
+  { id: "connector2", kind: "chip-connector", variant: "connector" },
+  { id: "tiny1", kind: "chip-tiny-block", variant: "ic" },
+  { id: "tiny2", kind: "chip-tiny-block", variant: "capacitor" },
+  { id: "tiny3", kind: "chip-tiny-block", variant: "resistor" },
+  { id: "tiny4", kind: "chip-tiny-block", variant: "ic" },
+];
+
+function ChipPartInner({ variant }) {
+  if (variant === "camera") {
+    return (
+      <>
+        <span className="chip-cam-body"></span>
+        <span className="chip-cam-lens chip-cam-lens-lg"></span>
+        <span className="chip-cam-lens chip-cam-lens-sm"></span>
+        <span className="chip-cam-flash"></span>
+        <span className="chip-cam-mic"></span>
+      </>
+    );
+  }
+
+  if (variant === "board") {
+    return (
+      <>
+        <span className="chip-pcb-trace t1"></span>
+        <span className="chip-pcb-trace t2"></span>
+        <span className="chip-pcb-trace t3"></span>
+        <span className="chip-pcb-ic"></span>
+        <span className="chip-pcb-pad p1"></span>
+        <span className="chip-pcb-pad p2"></span>
+        <span className="chip-pcb-pad p3"></span>
+        <span className="chip-pcb-pad p4"></span>
+      </>
+    );
+  }
+
+  if (variant === "battery") {
+    return (
+      <>
+        <span className="chip-batt-cell"></span>
+        <span className="chip-batt-label"></span>
+        <span className="chip-batt-tab"></span>
+        <span className="chip-batt-stripe"></span>
+      </>
+    );
+  }
+
+  if (variant === "screen") {
+    return (
+      <>
+        <span className="chip-screen-glass"></span>
+        <span className="chip-screen-notch"></span>
+        <span className="chip-screen-shine"></span>
+      </>
+    );
+  }
+
+  if (variant === "core") {
+    return (
+      <>
+        <span className="chip-die"></span>
+        <span className="chip-die-mark"></span>
+        <span className="chip-pin-row top"></span>
+        <span className="chip-pin-row bottom"></span>
+        <span className="chip-pin-row left"></span>
+        <span className="chip-pin-row right"></span>
+      </>
+    );
+  }
+
+  if (variant === "lens") {
+    return (
+      <>
+        <span className="chip-lens-outer"></span>
+        <span className="chip-lens-glass"></span>
+        <span className="chip-lens-iris"></span>
+        <span className="chip-lens-glint"></span>
+      </>
+    );
+  }
+
+  if (variant === "connector") {
+    return (
+      <>
+        <span className="chip-flex-body"></span>
+        <span className="chip-flex-pins"></span>
+        <span className="chip-flex-tip"></span>
+      </>
+    );
+  }
+
+  if (variant === "capacitor") {
+    return (
+      <>
+        <span className="chip-cap-body"></span>
+        <span className="chip-cap-band"></span>
+      </>
+    );
+  }
+
+  if (variant === "resistor") {
+    return (
+      <>
+        <span className="chip-res-body"></span>
+        <span className="chip-res-band b1"></span>
+        <span className="chip-res-band b2"></span>
+        <span className="chip-res-band b3"></span>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <span className="chip-ic-body"></span>
+      <span className="chip-ic-mark"></span>
+    </>
+  );
+}
 const WHEEL_DEADZONE = 4;
 const WHEEL_GESTURE_SETTLE_MS = 320;
 const SCROLL_DEBUG_QUERY_PARAM = "debugScroll";
@@ -39,10 +164,7 @@ function App() {
     const panels = Array.from(document.querySelectorAll(".panel"));
     const tiltCards = Array.from(document.querySelectorAll("[data-tilt-card]"));
     const sectionLinks = Array.from(document.querySelectorAll('a[href^="#"]'));
-    const phoneScreenEl = document.querySelector(".phone-screen");
     const phoneStageEl = document.querySelector(".phone-stage");
-    const phoneAboutLayerEl = document.querySelector(".phone-layer-about");
-    const aboutPanelContentEl = document.querySelector("#about .panel-content");
     const rootEl = document.documentElement;
     const searchParams = new URLSearchParams(window.location.search);
     const isScrollDebugEnabled =
@@ -53,9 +175,7 @@ function App() {
     let isWheelGestureConsumed = false;
     let wheelGestureUnlockTimerId = null;
     let lastActiveIndex = -1;
-    let isPhoneAboutVisible = false;
     let isPhoneStageHidden = false;
-    let isAboutPanelMuted = false;
     let logSequence = 0;
     const scrollDebugEntries = [];
 
@@ -148,58 +268,28 @@ function App() {
     };
 
     const updateHeroPhoneTransition = () => {
-      if (!rootEl || !deck || !phoneScreenEl || !phoneStageEl || !isDesktop()) {
+      if (!rootEl || !deck || !phoneStageEl || !isDesktop()) {
         rootEl?.style.setProperty("--hero-about-progress", "0");
-        rootEl?.style.setProperty("--about-screen-progress", "0");
-        rootEl?.style.setProperty("--about-exit-progress", "0");
-        phoneScreenEl?.classList.remove("is-about-visible");
+        rootEl?.style.setProperty("--about-experience-progress", "0");
         phoneStageEl?.classList.remove("is-hidden");
-        aboutPanelContentEl?.classList.remove("is-muted-by-phone");
-        isPhoneAboutVisible = false;
         isPhoneStageHidden = false;
-        isAboutPanelMuted = false;
         return;
       }
 
       const viewportWidth = deck.clientWidth || window.innerWidth || 1;
       const rawProgress = deck.scrollLeft / viewportWidth;
-      const progress = Math.max(0, Math.min(2.5, rawProgress));
+      const progress = Math.max(0, Math.min(3.4, rawProgress));
       const heroAboutProgress = Math.max(0, Math.min(1, progress));
-      const aboutScreenProgress = Math.max(0, Math.min(1, (progress - 0.58) / 0.42));
-      const aboutExitProgress = Math.max(0, Math.min(1, (progress - 1.06) / 0.44));
+      const aboutExperienceProgress = Math.max(0, Math.min(1, progress - 1));
       rootEl.style.setProperty("--hero-about-progress", heroAboutProgress.toFixed(3));
-      rootEl.style.setProperty("--about-screen-progress", aboutScreenProgress.toFixed(3));
-      rootEl.style.setProperty("--about-exit-progress", aboutExitProgress.toFixed(3));
+      rootEl.style.setProperty("--about-experience-progress", aboutExperienceProgress.toFixed(3));
 
-      const shouldShowAboutInPhone = progress >= 0.45;
-      if (shouldShowAboutInPhone !== isPhoneAboutVisible) {
-        phoneScreenEl.classList.toggle("is-about-visible", shouldShowAboutInPhone);
-        if (shouldShowAboutInPhone && phoneAboutLayerEl) {
-          phoneAboutLayerEl.scrollTop = 0;
-        }
-        isPhoneAboutVisible = shouldShowAboutInPhone;
-        pushScrollDebugLog("phone-content-mode", {
-          mode: shouldShowAboutInPhone ? "about" : "hero",
-          progress,
-        });
-      }
-
-      const shouldHidePhoneStage = progress > 1.72;
+      const shouldHidePhoneStage = progress > 2.08;
       if (shouldHidePhoneStage !== isPhoneStageHidden) {
         phoneStageEl.classList.toggle("is-hidden", shouldHidePhoneStage);
         isPhoneStageHidden = shouldHidePhoneStage;
         pushScrollDebugLog("phone-stage-visibility", {
           visible: !shouldHidePhoneStage,
-          progress,
-        });
-      }
-
-      const shouldMuteAboutPanel = progress >= 0.8 && progress <= 1.28;
-      if (shouldMuteAboutPanel !== isAboutPanelMuted) {
-        aboutPanelContentEl?.classList.toggle("is-muted-by-phone", shouldMuteAboutPanel);
-        isAboutPanelMuted = shouldMuteAboutPanel;
-        pushScrollDebugLog("about-panel-visibility", {
-          muted: shouldMuteAboutPanel,
           progress,
         });
       }
@@ -368,9 +458,7 @@ function App() {
       }
 
       rootEl?.style.setProperty("--hero-about-progress", "0");
-      rootEl?.style.setProperty("--about-screen-progress", "0");
-      rootEl?.style.setProperty("--about-exit-progress", "0");
-      aboutPanelContentEl?.classList.remove("is-muted-by-phone");
+      rootEl?.style.setProperty("--about-experience-progress", "0");
     };
   }, []);
 
@@ -396,6 +484,16 @@ function App() {
 
       <div className="phone-stage" aria-hidden="true">
         <div className="phone-model">
+          <div className="chip-cloud">
+            {CHIP_PARTS.map((part) => (
+              <span
+                key={part.id}
+                className={`chip-fragment ${part.id} ${part.kind} is-${part.variant}`}
+              >
+                <ChipPartInner variant={part.variant} />
+              </span>
+            ))}
+          </div>
           <div className="phone-screen">
             <div className="phone-notch">
               <span className="phone-camera"></span>
@@ -403,7 +501,168 @@ function App() {
             </div>
 
             <div className="phone-screen-content">
-              <div className="phone-layer phone-layer-hero">
+              <div className="phone-layer phone-layer-circuit">
+                <div className="phone-circuit-scene">
+                  <svg
+                    className="processor-svg"
+                    viewBox="0 0 200 240"
+                    fill="none"
+                    aria-hidden="true"
+                    role="presentation"
+                  >
+                    <defs>
+                      <filter
+                        id="processorGlow"
+                        x="-50%"
+                        y="-50%"
+                        width="200%"
+                        height="200%"
+                      >
+                        <feGaussianBlur stdDeviation="1.6" result="blur" />
+                        <feMerge>
+                          <feMergeNode in="blur" />
+                          <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                      </filter>
+                      <filter
+                        id="processorBloom"
+                        x="-80%"
+                        y="-80%"
+                        width="260%"
+                        height="260%"
+                      >
+                        <feGaussianBlur stdDeviation="3.2" result="bloom" />
+                        <feMerge>
+                          <feMergeNode in="bloom" />
+                          <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                      </filter>
+                    </defs>
+
+                    <g
+                      className="processor-traces"
+                      stroke="#3de8ff"
+                      strokeWidth="1.2"
+                      strokeLinecap="square"
+                      strokeLinejoin="miter"
+                      filter="url(#processorGlow)"
+                    >
+                      {/* Top — from pins at 85.6, 92.6, 100, 107.4, 114.4 */}
+                      <path d="M85.6 105.2 V82 H68 V54" />
+                      <path d="M92.6 105.2 V74 H80 V38" />
+                      <path d="M100 105.2 V48" />
+                      <path d="M107.4 105.2 V74 H120 V38" />
+                      <path d="M114.4 105.2 V82 H132 V54" />
+                      <path d="M85.6 105.2 V90 H54 V70 H36" />
+                      <path d="M114.4 105.2 V90 H146 V70 H164" />
+
+                      {/* Bottom — from pins at 85.6, 92.6, 100, 107.4, 114.4 */}
+                      <path d="M85.6 150.8 V174 H68 V202" />
+                      <path d="M92.6 150.8 V182 H80 V218" />
+                      <path d="M100 150.8 V208" />
+                      <path d="M107.4 150.8 V182 H120 V218" />
+                      <path d="M114.4 150.8 V174 H132 V202" />
+                      <path d="M85.6 150.8 V166 H54 V186 H36" />
+                      <path d="M114.4 150.8 V166 H146 V186 H164" />
+
+                      {/* Left — from pins at 115.6, 122.6, 128, 135.4 */}
+                      <path d="M77.2 115.6 H54 V96 H30" />
+                      <path d="M77.2 122.6 H48 V112 H20" />
+                      <path d="M77.2 128 H42" />
+                      <path d="M77.2 135.4 H48 V144 H20" />
+                      <path d="M77.2 140.4 H54 V160 H30" />
+
+                      {/* Right — from pins at 115.6, 122.6, 128, 135.4 */}
+                      <path d="M122.8 115.6 H146 V96 H170" />
+                      <path d="M122.8 122.6 H152 V112 H180" />
+                      <path d="M122.8 128 H158" />
+                      <path d="M122.8 135.4 H152 V144 H180" />
+                      <path d="M122.8 140.4 H146 V160 H170" />
+                    </g>
+
+                    <g
+                      className="processor-nodes"
+                      fill="none"
+                      stroke="#3de8ff"
+                      strokeWidth="1.25"
+                      filter="url(#processorGlow)"
+                    >
+                      {/* Top nodes */}
+                      <circle cx="68" cy="54" r="2.35" />
+                      <circle cx="80" cy="38" r="2.35" />
+                      <circle cx="100" cy="48" r="2.35" />
+                      <circle cx="120" cy="38" r="2.35" />
+                      <circle cx="132" cy="54" r="2.35" />
+                      <circle cx="36" cy="70" r="2.35" />
+                      <circle cx="164" cy="70" r="2.35" />
+
+                      {/* Bottom nodes */}
+                      <circle cx="68" cy="202" r="2.35" />
+                      <circle cx="80" cy="218" r="2.35" />
+                      <circle cx="100" cy="208" r="2.35" />
+                      <circle cx="120" cy="218" r="2.35" />
+                      <circle cx="132" cy="202" r="2.35" />
+                      <circle cx="36" cy="186" r="2.35" />
+                      <circle cx="164" cy="186" r="2.35" />
+
+                      {/* Left nodes */}
+                      <circle cx="30" cy="96" r="2.35" />
+                      <circle cx="20" cy="112" r="2.35" />
+                      <circle cx="42" cy="128" r="2.35" />
+                      <circle cx="20" cy="144" r="2.35" />
+                      <circle cx="30" cy="160" r="2.35" />
+
+                      {/* Right nodes */}
+                      <circle cx="170" cy="96" r="2.35" />
+                      <circle cx="180" cy="112" r="2.35" />
+                      <circle cx="158" cy="128" r="2.35" />
+                      <circle cx="180" cy="144" r="2.35" />
+                      <circle cx="170" cy="160" r="2.35" />
+                    </g>
+
+                    <g className="processor-core" filter="url(#processorBloom)">
+                      <rect
+                        x="80"
+                        y="108"
+                        width="40"
+                        height="40"
+                        rx="3.2"
+                        fill="#05080f"
+                        stroke="#3de8ff"
+                        strokeWidth="2.6"
+                      />
+                      <g fill="#3de8ff">
+                        {/* Top pins */}
+                        <rect x="84" y="105.2" width="3.2" height="2.8" rx="0.35" />
+                        <rect x="91" y="105.2" width="3.2" height="2.8" rx="0.35" />
+                        <rect x="98.4" y="105.2" width="3.2" height="2.8" rx="0.35" />
+                        <rect x="105.8" y="105.2" width="3.2" height="2.8" rx="0.35" />
+                        <rect x="112.8" y="105.2" width="3.2" height="2.8" rx="0.35" />
+                        {/* Bottom pins */}
+                        <rect x="84" y="148" width="3.2" height="2.8" rx="0.35" />
+                        <rect x="91" y="148" width="3.2" height="2.8" rx="0.35" />
+                        <rect x="98.4" y="148" width="3.2" height="2.8" rx="0.35" />
+                        <rect x="105.8" y="148" width="3.2" height="2.8" rx="0.35" />
+                        <rect x="112.8" y="148" width="3.2" height="2.8" rx="0.35" />
+                        {/* Left pins */}
+                        <rect x="77.2" y="114" width="2.8" height="3.2" rx="0.35" />
+                        <rect x="77.2" y="121" width="2.8" height="3.2" rx="0.35" />
+                        <rect x="77.2" y="126.4" width="2.8" height="3.2" rx="0.35" />
+                        <rect x="77.2" y="133.8" width="2.8" height="3.2" rx="0.35" />
+                        <rect x="77.2" y="138.8" width="2.8" height="3.2" rx="0.35" />
+                        {/* Right pins */}
+                        <rect x="120" y="114" width="2.8" height="3.2" rx="0.35" />
+                        <rect x="120" y="121" width="2.8" height="3.2" rx="0.35" />
+                        <rect x="120" y="126.4" width="2.8" height="3.2" rx="0.35" />
+                        <rect x="120" y="133.8" width="2.8" height="3.2" rx="0.35" />
+                        <rect x="120" y="138.8" width="2.8" height="3.2" rx="0.35" />
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+
+              <div className="phone-layer phone-layer-about-composite">
                 <div className="phone-top"></div>
                 <div className="phone-bars">
                   <span></span>
@@ -425,43 +684,12 @@ function App() {
                     </svg>
                   </div>
                   <div className="phone-hero-copy">
-                    <p className="phone-hero-title">Ship, Crash, Repeat</p>
+                    <p className="phone-hero-title">Think twice, code once</p>
                     <p className="phone-hero-subtext">
-                      It is 10% coding and 90% asking why it works on Android
-                      but breaks on iOS!!
+                      It is 10% coding and 90% asking why it works on Android but breaks on
+                      iOS !!
                     </p>
                   </div>
-                </div>
-                <div className="phone-hero-tech">
-                  <span>React Native</span>
-                  <span>React.js</span>
-                  <span>JavaScript</span>
-                  <span>WebRTC</span>
-                  <span>GraphQL</span>
-                </div>
-              </div>
-
-              <div className="phone-layer phone-layer-about">
-                <p className="phone-about-tag">About</p>
-                <h4>{ABOUT_TITLE}</h4>
-                <p className="phone-about-lead">{ABOUT_LEAD}</p>
-                <div className="phone-about-grid">
-                  <article className="phone-about-card">
-                    <h5>What I Do</h5>
-                    <ul>
-                      {ABOUT_WHAT_I_DO_ITEMS.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </article>
-                  <article className="phone-about-card">
-                    <h5>Core Stack</h5>
-                    <div className="phone-about-skills">
-                      {CORE_STACK_ITEMS.map((item) => (
-                        <span key={item}>{item}</span>
-                      ))}
-                    </div>
-                  </article>
                 </div>
               </div>
             </div>
@@ -479,8 +707,9 @@ function App() {
               <p className="eyebrow">Lead Mobile App Developer</p>
               <h1>Sadi Md Tarmim Hoque</h1>
               <p className="lead">
-                I build fast, scalable mobile apps and websites with JavaScript—mostly powered by React Native.
-                I enjoy turning “that sounds complicated” into “wow, that just works.”
+                I build fast, scalable mobile apps and websites with JavaScript—mostly powered by
+                React Native. I enjoy turning "that sounds complicated" into "wow, that just
+                works."
               </p>
               <div className="hero-meta">
                 <span>Dhaka, Bangladesh</span>
@@ -506,69 +735,77 @@ function App() {
         </section>
 
         <section id="about" className="panel">
-          <div className="panel-content">
-            <p className="eyebrow">About</p>
-            <h2>{ABOUT_TITLE}</h2>
-            <p className="section-lead">{ABOUT_LEAD}</p>
-
-            <div className="about-grid">
-              <article className="card">
-                <h3>What I Do</h3>
-                <ul>
-                  {ABOUT_WHAT_I_DO_ITEMS.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </article>
-              <article className="card">
-                <h3>Core Stack</h3>
-                <div className="skills">
-                  {CORE_STACK_ITEMS.map((item) => (
-                    <span key={item}>{item}</span>
-                  ))}
-                </div>
-              </article>
+          <div className="panel-content about-layout">
+            <div className="about-copy">
+              <p className="eyebrow">About</p>
+              <h2>{ABOUT_TITLE}</h2>
+              <p className="section-lead">{ABOUT_LEAD}</p>
+              <div className="about-grid">
+                <article className="card">
+                  <h3>What I Do</h3>
+                  <ul>
+                    {ABOUT_WHAT_I_DO_ITEMS.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </article>
+                <article className="card">
+                  <h3>Core Stack</h3>
+                  <div className="skills">
+                    {CORE_STACK_ITEMS.map((item) => (
+                      <span key={item}>{item}</span>
+                    ))}
+                  </div>
+                </article>
+              </div>
             </div>
+            <div className="about-phone-space" aria-hidden="true"></div>
           </div>
         </section>
 
         <section id="experience" className="panel">
-          <div className="panel-content">
-            <p className="eyebrow">Experience</p>
-            <h2>Building mobile products across startups and global teams</h2>
-            <div className="timeline">
-              <article className="timeline-item card" data-tilt-card>
-                <p className="time">2021 - Present</p>
-                <h3>Lead Mobile App Developer · Magnushub Ltd.</h3>
-                <p>
-                  Leading React Native app maintenance, release workflows, CI/CD, and team task
-                  distribution while translating business requirements into stable product features.
-                </p>
-              </article>
-              <article className="timeline-item card" data-tilt-card>
-                <p className="time">2024 - 2025</p>
-                <h3>Lead Mobile App Developer (Part-time) · Synesis IT Ltd.</h3>
-                <p>
-                  Worked on WebRTC, Jitsi Meet, and Matrix integrations in React Native and
-                  modified SwiftUI iOS chat modules for production communication use cases.
-                </p>
-              </article>
-              <article className="timeline-item card" data-tilt-card>
-                <p className="time">2020 - 2022</p>
-                <h3>Lead App Developer · Self Aware Machines Pvt. Ltd.</h3>
-                <p>
-                  Built meeting-room SDK solutions and web apps using React, GraphQL, Firebase
-                  auth, and realtime collaboration technologies for online classroom experiences.
-                </p>
-              </article>
-              <article className="timeline-item card" data-tilt-card>
-                <p className="time">2018 - 2021</p>
-                <h3>Software Developer / Engineer · Multiple Teams</h3>
-                <p>
-                  Delivered commerce, media, and event apps with React Native, Redux, MobX,
-                  Sentry, and push notifications while maintaining agile team processes.
-                </p>
-              </article>
+          <div className="panel-content experience-panel-content">
+            <div className="experience-device">
+              <span className="experience-side-rail"></span>
+              <div className="experience-device-screen">
+                <p className="eyebrow">Experience</p>
+                <h2>Building mobile products across startups and global teams</h2>
+                <div className="timeline">
+                  <article className="timeline-item card" data-tilt-card>
+                    <p className="time">2021 - Present</p>
+                    <h3>Lead Mobile App Developer · Magnushub Ltd.</h3>
+                    <p>
+                      Leading React Native app maintenance, release workflows, CI/CD, and team task
+                      distribution while translating business requirements into stable product
+                      features.
+                    </p>
+                  </article>
+                  <article className="timeline-item card" data-tilt-card>
+                    <p className="time">2024 - 2025</p>
+                    <h3>Lead Mobile App Developer (Part-time) · Synesis IT Ltd.</h3>
+                    <p>
+                      Worked on WebRTC, Jitsi Meet, and Matrix integrations in React Native and
+                      modified SwiftUI iOS chat modules for production communication use cases.
+                    </p>
+                  </article>
+                  <article className="timeline-item card" data-tilt-card>
+                    <p className="time">2020 - 2022</p>
+                    <h3>Lead App Developer · Self Aware Machines Pvt. Ltd.</h3>
+                    <p>
+                      Built meeting-room SDK solutions and web apps using React, GraphQL, Firebase
+                      auth, and realtime collaboration technologies for online classroom experiences.
+                    </p>
+                  </article>
+                  <article className="timeline-item card" data-tilt-card>
+                    <p className="time">2018 - 2021</p>
+                    <h3>Software Developer / Engineer · Multiple Teams</h3>
+                    <p>
+                      Delivered commerce, media, and event apps with React Native, Redux, MobX,
+                      Sentry, and push notifications while maintaining agile team processes.
+                    </p>
+                  </article>
+                </div>
+              </div>
             </div>
           </div>
         </section>
