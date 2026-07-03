@@ -410,7 +410,35 @@ function App() {
                   <span></span>
                   <span></span>
                 </div>
-                <div className="phone-text">React Native + iOS + CI/CD</div>
+                <div className="phone-text">React Native, shipped fast</div>
+                <div className="phone-hero-highlight">
+                  <div className="phone-react-badge" aria-hidden="true">
+                    <svg
+                      className="phone-react-logo"
+                      viewBox="-11.5 -10.5 23 21"
+                      role="presentation"
+                    >
+                      <ellipse rx="11" ry="4.2"></ellipse>
+                      <ellipse rx="11" ry="4.2" transform="rotate(60)"></ellipse>
+                      <ellipse rx="11" ry="4.2" transform="rotate(120)"></ellipse>
+                      <circle r="1.7"></circle>
+                    </svg>
+                  </div>
+                  <div className="phone-hero-copy">
+                    <p className="phone-hero-title">Ship, Crash, Repeat</p>
+                    <p className="phone-hero-subtext">
+                      It is 10% coding and 90% asking why it works on Android
+                      but breaks on iOS!!
+                    </p>
+                  </div>
+                </div>
+                <div className="phone-hero-tech">
+                  <span>React Native</span>
+                  <span>React.js</span>
+                  <span>JavaScript</span>
+                  <span>WebRTC</span>
+                  <span>GraphQL</span>
+                </div>
               </div>
 
               <div className="phone-layer phone-layer-about">
@@ -451,12 +479,12 @@ function App() {
               <p className="eyebrow">Lead Mobile App Developer</p>
               <h1>Sadi Md Tarmim Hoque</h1>
               <p className="lead">
-                I build fast, scalable, and beautiful cross-platform mobile products with React
-                Native, iOS technologies, and modern frontend systems.
+                I build fast, scalable mobile apps and websites with JavaScript—mostly powered by React Native.
+                I enjoy turning “that sounds complicated” into “wow, that just works.”
               </p>
               <div className="hero-meta">
                 <span>Dhaka, Bangladesh</span>
-                <span>8+ years in software</span>
+                <span>9+ years in software</span>
                 <span>1000+ LinkedIn followers</span>
               </div>
               <div className="hero-actions">
