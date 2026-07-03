@@ -8,6 +8,25 @@ const navItems = [
 ];
 
 const dots = ["#hero", "#about", "#experience", "#projects", "#contact"];
+const ABOUT_TITLE = "Product-minded engineer with leadership focus";
+const ABOUT_LEAD =
+  "At Magnushub I lead mobile development, manage releases, and help teams deliver with clean architecture, CI/CD, and reliable app-store shipping.";
+const ABOUT_WHAT_I_DO_ITEMS = [
+  "Cross-platform app architecture with React Native",
+  "App Store and Play Store release management",
+  "Feature planning with clients and engineering teams",
+  "Realtime communication with WebRTC and Matrix",
+];
+const CORE_STACK_ITEMS = [
+  "React Native",
+  "React.js",
+  "iOS / SwiftUI",
+  "GraphQL",
+  "Node.js",
+  "Firebase",
+  "WebRTC",
+  "CI/CD",
+];
 const WHEEL_DEADZONE = 4;
 const WHEEL_GESTURE_SETTLE_MS = 320;
 const SCROLL_DEBUG_QUERY_PARAM = "debugScroll";
@@ -20,6 +39,10 @@ function App() {
     const panels = Array.from(document.querySelectorAll(".panel"));
     const tiltCards = Array.from(document.querySelectorAll("[data-tilt-card]"));
     const sectionLinks = Array.from(document.querySelectorAll('a[href^="#"]'));
+    const phoneScreenEl = document.querySelector(".phone-screen");
+    const phoneStageEl = document.querySelector(".phone-stage");
+    const aboutPanelContentEl = document.querySelector("#about .panel-content");
+    const rootEl = document.documentElement;
     const searchParams = new URLSearchParams(window.location.search);
     const isScrollDebugEnabled =
       searchParams.get(SCROLL_DEBUG_QUERY_PARAM) === "1" ||
@@ -29,6 +52,9 @@ function App() {
     let isWheelGestureConsumed = false;
     let wheelGestureUnlockTimerId = null;
     let lastActiveIndex = -1;
+    let isPhoneAboutVisible = false;
+    let isPhoneStageHidden = false;
+    let isAboutPanelMuted = false;
     let logSequence = 0;
     const scrollDebugEntries = [];
 
@@ -120,7 +146,63 @@ function App() {
       });
     };
 
+    const updateHeroPhoneTransition = () => {
+      if (!rootEl || !deck || !phoneScreenEl || !phoneStageEl || !isDesktop()) {
+        rootEl?.style.setProperty("--hero-about-progress", "0");
+        rootEl?.style.setProperty("--about-screen-progress", "0");
+        rootEl?.style.setProperty("--about-exit-progress", "0");
+        phoneScreenEl?.classList.remove("is-about-visible");
+        phoneStageEl?.classList.remove("is-hidden");
+        aboutPanelContentEl?.classList.remove("is-muted-by-phone");
+        isPhoneAboutVisible = false;
+        isPhoneStageHidden = false;
+        isAboutPanelMuted = false;
+        return;
+      }
+
+      const viewportWidth = deck.clientWidth || window.innerWidth || 1;
+      const rawProgress = deck.scrollLeft / viewportWidth;
+      const progress = Math.max(0, Math.min(2.5, rawProgress));
+      const heroAboutProgress = Math.max(0, Math.min(1, progress));
+      const aboutScreenProgress = Math.max(0, Math.min(1, (progress - 0.58) / 0.42));
+      const aboutExitProgress = Math.max(0, Math.min(1, (progress - 1.06) / 0.44));
+      rootEl.style.setProperty("--hero-about-progress", heroAboutProgress.toFixed(3));
+      rootEl.style.setProperty("--about-screen-progress", aboutScreenProgress.toFixed(3));
+      rootEl.style.setProperty("--about-exit-progress", aboutExitProgress.toFixed(3));
+
+      const shouldShowAboutInPhone = progress >= 0.45;
+      if (shouldShowAboutInPhone !== isPhoneAboutVisible) {
+        phoneScreenEl.classList.toggle("is-about-visible", shouldShowAboutInPhone);
+        isPhoneAboutVisible = shouldShowAboutInPhone;
+        pushScrollDebugLog("phone-content-mode", {
+          mode: shouldShowAboutInPhone ? "about" : "hero",
+          progress,
+        });
+      }
+
+      const shouldHidePhoneStage = progress > 1.72;
+      if (shouldHidePhoneStage !== isPhoneStageHidden) {
+        phoneStageEl.classList.toggle("is-hidden", shouldHidePhoneStage);
+        isPhoneStageHidden = shouldHidePhoneStage;
+        pushScrollDebugLog("phone-stage-visibility", {
+          visible: !shouldHidePhoneStage,
+          progress,
+        });
+      }
+
+      const shouldMuteAboutPanel = progress >= 0.8 && progress <= 1.28;
+      if (shouldMuteAboutPanel !== isAboutPanelMuted) {
+        aboutPanelContentEl?.classList.toggle("is-muted-by-phone", shouldMuteAboutPanel);
+        isAboutPanelMuted = shouldMuteAboutPanel;
+        pushScrollDebugLog("about-panel-visibility", {
+          muted: shouldMuteAboutPanel,
+          progress,
+        });
+      }
+    };
+
     const syncActiveDot = () => {
+      updateHeroPhoneTransition();
       if (!deck || dotElements.length === 0 || panels.length === 0 || !isDesktop()) {
         return;
       }
@@ -280,6 +362,11 @@ function App() {
       if (window.__scrollDebug) {
         delete window.__scrollDebug;
       }
+
+      rootEl?.style.setProperty("--hero-about-progress", "0");
+      rootEl?.style.setProperty("--about-screen-progress", "0");
+      rootEl?.style.setProperty("--about-exit-progress", "0");
+      aboutPanelContentEl?.classList.remove("is-muted-by-phone");
     };
   }, []);
 
@@ -302,6 +389,56 @@ function App() {
           Hire Me
         </a>
       </header>
+
+      <div className="phone-stage" aria-hidden="true">
+        <div className="phone-model">
+          <div className="phone-screen">
+            <div className="phone-notch">
+              <span className="phone-camera"></span>
+              <span className="phone-speaker"></span>
+            </div>
+
+            <div className="phone-screen-content">
+              <div className="phone-layer phone-layer-hero">
+                <div className="phone-top"></div>
+                <div className="phone-bars">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <div className="phone-text">React Native + iOS + CI/CD</div>
+              </div>
+
+              <div className="phone-layer phone-layer-about">
+                <p className="phone-about-tag">About</p>
+                <h4>{ABOUT_TITLE}</h4>
+                <p className="phone-about-lead">{ABOUT_LEAD}</p>
+                <div className="phone-about-grid">
+                  <article className="phone-about-card">
+                    <h5>What I Do</h5>
+                    <ul>
+                      {ABOUT_WHAT_I_DO_ITEMS.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </article>
+                  <article className="phone-about-card">
+                    <h5>Core Stack</h5>
+                    <div className="phone-about-skills">
+                      {CORE_STACK_ITEMS.map((item) => (
+                        <span key={item}>{item}</span>
+                      ))}
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
+
+            <div className="phone-gesture-bar"></div>
+            <div className="phone-glow"></div>
+          </div>
+        </div>
+      </div>
 
       <main id="deck" className="deck" aria-live="polite">
         <section id="hero" className="panel">
@@ -332,54 +469,31 @@ function App() {
                 </a>
               </div>
             </div>
-
-            <div className="hero-3d-wrap" data-tilt-area>
-              <div className="phone-model" data-tilt-card>
-                <div className="phone-screen">
-                  <div className="phone-top"></div>
-                  <div className="phone-bars">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-                  <div className="phone-text">React Native + iOS + CI/CD</div>
-                  <div className="phone-glow"></div>
-                </div>
-              </div>
-            </div>
+            <div className="hero-phone-space" aria-hidden="true"></div>
           </div>
         </section>
 
         <section id="about" className="panel">
           <div className="panel-content">
             <p className="eyebrow">About</p>
-            <h2>Product-minded engineer with leadership focus</h2>
-            <p className="section-lead">
-              At Magnushub I lead mobile development, manage releases, and help teams deliver with
-              clean architecture, CI/CD, and reliable app-store shipping.
-            </p>
+            <h2>{ABOUT_TITLE}</h2>
+            <p className="section-lead">{ABOUT_LEAD}</p>
 
             <div className="about-grid">
               <article className="card">
                 <h3>What I Do</h3>
                 <ul>
-                  <li>Cross-platform app architecture with React Native</li>
-                  <li>App Store and Play Store release management</li>
-                  <li>Feature planning with clients and engineering teams</li>
-                  <li>Realtime communication with WebRTC and Matrix</li>
+                  {ABOUT_WHAT_I_DO_ITEMS.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
                 </ul>
               </article>
               <article className="card">
                 <h3>Core Stack</h3>
                 <div className="skills">
-                  <span>React Native</span>
-                  <span>React.js</span>
-                  <span>iOS / SwiftUI</span>
-                  <span>GraphQL</span>
-                  <span>Node.js</span>
-                  <span>Firebase</span>
-                  <span>WebRTC</span>
-                  <span>CI/CD</span>
+                  {CORE_STACK_ITEMS.map((item) => (
+                    <span key={item}>{item}</span>
+                  ))}
                 </div>
               </article>
             </div>
