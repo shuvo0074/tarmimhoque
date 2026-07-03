@@ -41,6 +41,7 @@ function App() {
     const sectionLinks = Array.from(document.querySelectorAll('a[href^="#"]'));
     const phoneScreenEl = document.querySelector(".phone-screen");
     const phoneStageEl = document.querySelector(".phone-stage");
+    const phoneAboutLayerEl = document.querySelector(".phone-layer-about");
     const aboutPanelContentEl = document.querySelector("#about .panel-content");
     const rootEl = document.documentElement;
     const searchParams = new URLSearchParams(window.location.search);
@@ -173,6 +174,9 @@ function App() {
       const shouldShowAboutInPhone = progress >= 0.45;
       if (shouldShowAboutInPhone !== isPhoneAboutVisible) {
         phoneScreenEl.classList.toggle("is-about-visible", shouldShowAboutInPhone);
+        if (shouldShowAboutInPhone && phoneAboutLayerEl) {
+          phoneAboutLayerEl.scrollTop = 0;
+        }
         isPhoneAboutVisible = shouldShowAboutInPhone;
         pushScrollDebugLog("phone-content-mode", {
           mode: shouldShowAboutInPhone ? "about" : "hero",
