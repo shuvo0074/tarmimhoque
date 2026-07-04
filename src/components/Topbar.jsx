@@ -1,3 +1,5 @@
+// Topbar: fixed site header with brand, section nav, and hire CTA.
+// Views: web and mobile (section links hidden on mobile).
 import { memo } from "react";
 import { NAV_ITEMS, PROFILE } from "../data/portfolio";
 

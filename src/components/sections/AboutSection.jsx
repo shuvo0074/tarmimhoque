@@ -1,3 +1,5 @@
+// AboutSection: background copy and stack summary beside the phone stage.
+// Views: web and mobile (phone spacer is web only).
 import { memo } from "react";
 import { ABOUT } from "../../data/portfolio";
 

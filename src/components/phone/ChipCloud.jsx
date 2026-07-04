@@ -1,3 +1,5 @@
+// ChipCloud: scattered phone hardware fragments that reassemble on About.
+// Views: web only (inside PhoneStage).
 import { memo } from "react";
 import { CHIP_PARTS } from "../../data/portfolio";
 import { ChipPart } from "./ChipPart";

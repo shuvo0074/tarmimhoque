@@ -1,3 +1,5 @@
+// App: root layout that wires refs, scroll interactions, and page chrome.
+// Views: web and mobile.
 import { useRef } from "react";
 import { Deck } from "./components/Deck";
 import { Dots } from "./components/Dots";

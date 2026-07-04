@@ -1,3 +1,5 @@
+// PhoneStage: fixed 3D phone shell that animates across Hero → About → Experience.
+// Views: web only.
 import { forwardRef, memo } from "react";
 import { ChipCloud } from "./ChipCloud";
 import { PhoneAboutLayer } from "./PhoneAboutLayer";

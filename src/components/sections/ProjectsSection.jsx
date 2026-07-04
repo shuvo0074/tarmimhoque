@@ -1,3 +1,5 @@
+// ProjectsSection: selected shipped apps and platforms.
+// Views: web and mobile.
 import { memo } from "react";
 import { PROJECTS } from "../../data/portfolio";
 

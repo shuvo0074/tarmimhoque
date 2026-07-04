@@ -1,3 +1,5 @@
+// Scroll interaction constants: timing, panel indexes, and debug settings.
+// Views: web (horizontal deck); mobile uses normal vertical scroll.
 export const WHEEL_DEADZONE = 4;
 export const WHEEL_GESTURE_SETTLE_MS = 320;
 export const ABOUT_PANEL_INDEX = 1;

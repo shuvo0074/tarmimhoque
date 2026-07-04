@@ -1,3 +1,5 @@
+// ExperienceSection: scroll target for Experience; mobile fallback timeline when phone is hidden.
+// Views: web (phone spacer + in-phone grid) and mobile (experience-mobile-fallback timeline).
 import { memo } from "react";
 import { EXPERIENCE } from "../../data/portfolio";
 

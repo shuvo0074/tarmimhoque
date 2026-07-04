@@ -1,3 +1,5 @@
+// Portfolio content: single source of truth for copy, links, and list data.
+// Views: web and mobile (shared content).
 export const NAV_ITEMS = [
   { href: "#about", label: "About" },
   { href: "#experience", label: "Experience" },

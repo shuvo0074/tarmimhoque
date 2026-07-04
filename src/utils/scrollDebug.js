@@ -1,3 +1,5 @@
+// Optional scroll logger: records wheel/panel events when debugScroll=1.
+// Views: web (horizontal deck debugging).
 import { SCROLL_DEBUG_MAX_ENTRIES, SCROLL_DEBUG_QUERY_PARAM } from "../constants/scroll";
 
 export function createScrollDebug() {

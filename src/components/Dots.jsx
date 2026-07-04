@@ -1,3 +1,5 @@
+// Dots: side pagination indicators for the horizontal deck panels.
+// Views: web only.
 import { memo } from "react";
 import { DOTS } from "../data/portfolio";
 

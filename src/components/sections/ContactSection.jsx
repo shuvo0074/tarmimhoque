@@ -1,3 +1,5 @@
+// ContactSection: contact links and closing quote card.
+// Views: web and mobile.
 import { memo } from "react";
 import { CONTACT, PROFILE } from "../../data/portfolio";
 

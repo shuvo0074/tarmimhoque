@@ -1,3 +1,5 @@
+// HeroSection: intro panel with name, pitch, and primary CTAs.
+// Views: web and mobile.
 import { memo } from "react";
 import { HERO, PROFILE } from "../../data/portfolio";
 

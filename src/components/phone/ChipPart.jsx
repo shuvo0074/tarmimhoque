@@ -1,3 +1,5 @@
+// ChipPart: one realistic hardware fragment (camera, battery, PCB, etc.).
+// Views: web only (inside PhoneStage).
 import { memo } from "react";
 
 const VARIANT_MARKUP = {

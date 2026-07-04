@@ -1,3 +1,5 @@
+// Deck: scroll container that hosts all portfolio sections.
+// Views: web (horizontal) and mobile (vertical).
 import { forwardRef, memo } from "react";
 import { AboutSection } from "./sections/AboutSection";
 import { ContactSection } from "./sections/ContactSection";

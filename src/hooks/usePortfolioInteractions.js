@@ -1,3 +1,6 @@
+// Portfolio interactions: horizontal deck scroll, phone CSS progress, tilt, and section links.
+// Keeps animation off the React render path by updating DOM/CSS variables imperatively.
+// Views: web (primary); mobile falls back to native vertical scrolling.
 import { useEffect } from "react";
 import {
   ABOUT_PANEL_INDEX,
@@ -90,10 +93,6 @@ function updatePhoneTransition(rootEl, deck, phoneStageEl, state, debug) {
   }
 }
 
-/**
- * Imperative scroll/tilt/phone interactions stay off the React render path
- * so panel transitions only update CSS variables and DOM classes.
- */
 export function usePortfolioInteractions({ deckRef, phoneStageRef }) {
   useEffect(() => {
     const deck = deckRef.current;

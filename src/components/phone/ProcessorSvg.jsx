@@ -1,3 +1,5 @@
+// ProcessorSvg: neon microprocessor graphic shown on the Hero phone screen.
+// Views: web only (inside PhoneStage).
 import { memo } from "react";
 
 const TRACE_PATHS = [

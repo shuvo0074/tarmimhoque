@@ -1,3 +1,5 @@
+// PhoneAboutLayer: About-state phone UI (status bars, React badge, quote).
+// Views: web only (inside PhoneStage).
 import { memo } from "react";
 import { PHONE_ABOUT } from "../../data/portfolio";
 

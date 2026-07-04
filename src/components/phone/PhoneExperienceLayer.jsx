@@ -1,3 +1,5 @@
+// PhoneExperienceLayer: landscape Experience grid rendered inside the phone screen.
+// Views: web only (inside PhoneStage).
 import { memo } from "react";
 import { EXPERIENCE } from "../../data/portfolio";
 
