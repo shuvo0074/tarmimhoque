@@ -9,6 +9,8 @@ import magnusaiGifImage from "../assets/project_images/magnusai.gif";
 import magnusaiLogoImage from "../assets/project_images/magnusAI_logo.jpg";
 import kothamalaAppImage from "../assets/project_images/kothamala.png";
 import kothamalaLogoImage from "../assets/project_images/kothamala_logo.png";
+import benjiLogoImage from "../assets/project_images/benji_logo.webp";
+import benjiAppImage from "../assets/project_images/benji_ss.png";
 
 export const NAV_ITEMS = [
   { href: "#about", label: "About" },
@@ -221,13 +223,38 @@ export const PROJECTS = [
     ],
   },
   {
+    title: "Benji",
+    body: "Urban electric scooter sharing app with map-based discovery, reservations, and unlock flows.",
+    tags: ["React Native", "Redux", "Google Maps"],
+    visible: true,
+    images: [
+      {
+        src: benjiAppImage,
+        alt: "Benji mobile app screenshot",
+      },
+      {
+        src: benjiLogoImage,
+        alt: "Benji logo",
+        buttons: [
+          {
+            label: "Play Store",
+            url: "https://play.google.com/store/apps/details?id=com.otoride.benjiapp",
+          },
+          {
+            label: "App Store",
+            url: "https://apps.apple.com/in/app/benji-urban-e-rides/id6468982815",
+          },
+        ],
+      },
+    ],
+  },
+  {
     title: "Imagine Radio",
     body: "Streaming platform across Android, iOS, and web player experiences.",
     tags: ["React Native", "React.js", "MobX"],
     visible: false,
     images: [],
   },
-
   {
     title: "Pipra Store / Jirabo / Express Ticket",
     body: "Commerce and ticketing apps with checkout, search, and scalable frontend patterns.",
