@@ -25,6 +25,8 @@ export const PROFILE = {
   email: "tarmimhoqueshuvo@gmail.com",
   phone: "+8801673552194",
   phoneHref: "tel:+8801673552194",
+  whatsapp: "+8801841863403",
+  whatsappHref: "http://wa.me/+8801841863403",
   github: "https://github.com/shuvo0074",
   githubLabel: "github.com/shuvo0074",
   linkedin: "https://www.linkedin.com/in/sadi-md-tarmim-hoque-6b3b4179/",

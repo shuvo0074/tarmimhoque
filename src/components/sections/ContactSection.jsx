@@ -14,6 +14,9 @@ function ContactSectionComponent() {
           <div className="contact-list">
             <a href={`mailto:${PROFILE.email}`}>{PROFILE.email}</a>
             <a href={PROFILE.phoneHref}>{PROFILE.phone}</a>
+            <a href={PROFILE.whatsappHref} target="_blank" rel="noreferrer">
+              WhatsApp {PROFILE.whatsapp}
+            </a>
             <a href={PROFILE.github} target="_blank" rel="noreferrer">
               {PROFILE.githubLabel}
             </a>
