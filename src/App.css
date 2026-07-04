@@ -11,6 +11,7 @@
   --shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
   --hero-about-progress: 0;
   --about-experience-progress: 0;
+  --experience-projects-progress: 0;
 }
 
 *,
@@ -234,6 +235,10 @@ h3 {
   top: 52%;
   left: 50%;
   z-index: 13;
+  width: min(1180px, 94vw);
+  height: min(86vh, 704px);
+  display: grid;
+  place-items: center;
   transform:
     translate(-50%, -50%)
     translateX(
@@ -259,19 +264,25 @@ html.is-fast-about-experience .phone-layer-experience {
 }
 
 .phone-model {
+  position: relative;
+  z-index: 2;
   width: min(
     calc(
-      292px + var(--hero-about-progress) * 68px + var(--about-experience-progress) * 620px
+      292px + var(--hero-about-progress) * 68px + var(--about-experience-progress) * 620px -
+        var(--experience-projects-progress) * 420px
     ),
     calc(100vw - 48px)
   );
-  aspect-ratio: calc(0.58 + var(--about-experience-progress) * 1.22);
+  aspect-ratio: calc(
+    0.58 + var(--about-experience-progress) * 1.22 - var(--experience-projects-progress) * 1.1
+  );
   padding: calc(0.9rem - var(--about-experience-progress) * 0.2rem);
   border-radius: calc(2.3rem - var(--about-experience-progress) * 0.45rem);
   border: 1px solid var(--border);
   background: linear-gradient(140deg, rgba(12, 22, 39, 0.96), rgba(8, 13, 22, 0.9));
   box-shadow: var(--shadow);
   transform-style: preserve-3d;
+  opacity: calc(1 - var(--experience-projects-progress));
   transform:
     translate3d(
       0,
@@ -281,7 +292,12 @@ html.is-fast-about-experience .phone-layer-experience {
     rotateX(calc(16deg - var(--hero-about-progress) * 16deg))
     rotateY(calc(-20deg + var(--hero-about-progress) * 20deg))
     rotateZ(calc(-12deg + var(--hero-about-progress) * 12deg))
-    scale(calc(0.94 + var(--hero-about-progress) * 0.12 + var(--about-experience-progress) * 0.06));
+    scale(
+      calc(
+        0.94 + var(--hero-about-progress) * 0.12 + var(--about-experience-progress) * 0.06 -
+          var(--experience-projects-progress) * 0.35
+      )
+    );
   transition:
     transform 0.28s ease-out,
     opacity 0.3s ease,
@@ -289,6 +305,7 @@ html.is-fast-about-experience .phone-layer-experience {
     aspect-ratio 0.28s ease-out,
     border-radius 0.28s ease-out,
     padding 0.28s ease-out;
+  pointer-events: none;
 }
 
 .chip-cloud {
@@ -986,10 +1003,178 @@ html.is-fast-about-experience .phone-layer-experience {
   flex-direction: column;
   gap: 1.1rem;
   padding: 2rem 0.9rem 0.4rem 1.8rem;
-  opacity: clamp(0, calc((var(--about-experience-progress) - 0.28) * 2.4), 1);
+  opacity: clamp(
+    0,
+    calc(
+      (var(--about-experience-progress) - 0.28) * 2.4 - var(--experience-projects-progress) * 2.4
+    ),
+    1
+  );
   transform: translateY(calc((1 - var(--about-experience-progress)) * 18px));
   transition: opacity 0.28s ease, transform 0.28s ease;
   overflow: hidden;
+  pointer-events: none;
+}
+
+/* Project phones: experience landscape phone splits into portrait slider cards */
+.project-phone-slider {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  padding: 0.4rem 0.6rem 0.8rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  opacity: clamp(0, calc((var(--experience-projects-progress) - 0.12) * 1.8), 1);
+  transform: scale(calc(0.82 + var(--experience-projects-progress) * 0.18));
+  transition: opacity 0.28s ease, transform 0.28s ease;
+  pointer-events: none;
+}
+
+.project-phone-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.phone-stage.is-projects-visible .project-phone-slider {
+  pointer-events: auto;
+}
+
+.project-phone {
+  --from-center: calc((var(--project-index) - (var(--project-count) - 1) / 2) * -13rem);
+  flex: 0 0 auto;
+  width: min(220px, 24vw);
+  scroll-snap-align: center;
+  transform:
+    translateX(calc(var(--from-center) * (1 - var(--experience-projects-progress))))
+    rotateY(calc((var(--project-index) - (var(--project-count) - 1) / 2) * (1 - var(--experience-projects-progress)) * -8deg))
+    scale(calc(0.52 + var(--experience-projects-progress) * 0.48));
+  opacity: clamp(0.15, var(--experience-projects-progress), 1);
+  transition: transform 0.32s ease-out, opacity 0.28s ease;
+}
+
+.project-phone-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 0.527;
+  padding: 0.72rem;
+  border-radius: 1.85rem;
+  border: 1px solid var(--border);
+  background: linear-gradient(145deg, rgba(12, 22, 39, 0.98), rgba(8, 13, 22, 0.94));
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.project-phone-notch {
+  position: absolute;
+  top: 0.55rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 34%;
+  height: 0.9rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(5, 10, 18, 0.95), rgba(2, 6, 11, 0.96));
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28rem;
+  z-index: 4;
+}
+
+.project-phone-camera {
+  width: 0.36rem;
+  height: 0.36rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #5a7aa2, #0d1728 58%);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.project-phone-speaker {
+  width: 0.95rem;
+  height: 0.18rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.4);
+}
+
+.project-phone-content {
+  position: absolute;
+  inset: 2.1rem 0.42rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.2rem 0.15rem;
+  border-radius: 0.9rem;
+  background:
+    radial-gradient(circle at top right, rgba(94, 234, 212, 0.2), transparent 48%),
+    radial-gradient(circle at bottom right, rgba(94, 234, 212, 0.12), transparent 42%),
+    #04070f;
+  overflow: hidden;
+}
+
+.project-phone-content .phone-bars {
+  margin-top: 0.15rem;
+}
+
+.project-phone-content .phone-hero-highlight {
+  flex: 1;
+  align-items: flex-start;
+  min-height: 0;
+}
+
+.project-phone-content .phone-hero-title {
+  font-size: 0.78rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.project-phone-content .phone-hero-subtext {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.project-phone-badge {
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(94, 234, 212, 0.08);
+  border: 1px solid rgba(94, 234, 212, 0.3);
+}
+
+.project-phone-gesture {
+  position: absolute;
+  left: 50%;
+  bottom: 0.42rem;
+  transform: translateX(-50%);
+  width: 35%;
+  height: 0.22rem;
+  border-radius: 999px;
+  background: rgba(214, 226, 247, 0.5);
+  z-index: 4;
+}
+
+.project-phone-glow {
+  position: absolute;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 999px;
+  right: -2.2rem;
+  bottom: -2.2rem;
+  background: radial-gradient(circle, rgba(94, 234, 212, 0.4), transparent 70%);
+  z-index: 0;
   pointer-events: none;
 }
 
@@ -1413,28 +1598,36 @@ html.is-fast-about-experience .phone-layer-experience {
   display: none;
 }
 
+.projects-panel-content {
+  width: min(1220px, 100%);
+}
+
+.projects-panel-content h2 {
+  margin-bottom: 5.5rem;
+}
+
+.projects-phone-space {
+  min-height: min(75vh, 616px);
+}
+
+.projects-mobile-fallback {
+  display: none;
+}
+
 .project-row {
   margin-top: 1.5rem;
   display: grid;
-  grid-template-columns: repeat(5, minmax(240px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
-  overflow-x: auto;
-  padding-bottom: 0.4rem;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(94, 234, 212, 0.4) transparent;
+  scrollbar-width: none;
 }
 
 .project-row::-webkit-scrollbar {
-  height: 0.4rem;
-}
-
-.project-row::-webkit-scrollbar-thumb {
-  background: rgba(94, 234, 212, 0.4);
-  border-radius: 999px;
+  display: none;
 }
 
 .project {
-  min-height: 15rem;
+  min-height: 12rem;
 }
 
 .project p {
@@ -1561,17 +1754,18 @@ html.is-fast-about-experience .phone-layer-experience {
   }
 
   .about-phone-space,
-  .experience-phone-space {
+  .experience-phone-space,
+  .projects-phone-space {
     display: none;
     min-height: 0;
   }
 
-  .experience-mobile-fallback {
+  .experience-mobile-fallback,
+  .projects-mobile-fallback {
     display: block;
   }
 
   .project-row {
     grid-template-columns: 1fr;
-    overflow-x: visible;
   }
 }

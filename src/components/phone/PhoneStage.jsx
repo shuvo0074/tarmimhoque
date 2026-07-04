@@ -1,10 +1,11 @@
-// PhoneStage: fixed 3D phone shell that animates across Hero → About → Experience.
+// PhoneStage: fixed 3D phone shell that animates across Hero → About → Experience → Projects.
 // Views: web only.
 import { forwardRef, memo } from "react";
 import { ChipCloud } from "./ChipCloud";
 import { PhoneAboutLayer } from "./PhoneAboutLayer";
 import { PhoneExperienceLayer } from "./PhoneExperienceLayer";
 import { ProcessorSvg } from "./ProcessorSvg";
+import { ProjectPhoneSlider } from "./ProjectPhoneSlider";
 
 const PhoneStageComponent = forwardRef(function PhoneStageComponent(_, ref) {
   return (
@@ -31,6 +32,7 @@ const PhoneStageComponent = forwardRef(function PhoneStageComponent(_, ref) {
           <div className="phone-glow"></div>
         </div>
       </div>
+      <ProjectPhoneSlider />
     </div>
   );
 });

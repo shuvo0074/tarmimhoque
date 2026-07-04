@@ -8,6 +8,7 @@ import {
   EXPERIENCE_PANEL_INDEX,
   MAX_SCROLL_PROGRESS,
   PHONE_HIDE_PROGRESS,
+  PROJECTS_SLIDER_ACTIVE_PROGRESS,
   SCROLL_DEBUG_QUERY_PARAM,
   WHEEL_DEADZONE,
   WHEEL_GESTURE_SETTLE_MS,
@@ -69,8 +70,10 @@ function updatePhoneTransition(rootEl, deck, phoneStageEl, state, debug) {
   if (!rootEl || !deck || !phoneStageEl || !isDesktop()) {
     rootEl?.style.setProperty("--hero-about-progress", "0");
     rootEl?.style.setProperty("--about-experience-progress", "0");
-    phoneStageEl?.classList.remove("is-hidden");
+    rootEl?.style.setProperty("--experience-projects-progress", "0");
+    phoneStageEl?.classList.remove("is-hidden", "is-projects-visible");
     state.isPhoneStageHidden = false;
+    state.isProjectsVisible = false;
     return;
   }
 
@@ -78,9 +81,14 @@ function updatePhoneTransition(rootEl, deck, phoneStageEl, state, debug) {
   const progress = Math.max(0, Math.min(MAX_SCROLL_PROGRESS, deck.scrollLeft / viewportWidth));
   const heroAboutProgress = Math.max(0, Math.min(1, progress));
   const aboutExperienceProgress = Math.max(0, Math.min(1, progress - 1));
+  const experienceProjectsProgress = Math.max(0, Math.min(1, progress - 2));
 
   rootEl.style.setProperty("--hero-about-progress", heroAboutProgress.toFixed(3));
   rootEl.style.setProperty("--about-experience-progress", aboutExperienceProgress.toFixed(3));
+  rootEl.style.setProperty(
+    "--experience-projects-progress",
+    experienceProjectsProgress.toFixed(3)
+  );
 
   const shouldHidePhoneStage = progress > PHONE_HIDE_PROGRESS;
   if (shouldHidePhoneStage !== state.isPhoneStageHidden) {
@@ -90,6 +98,12 @@ function updatePhoneTransition(rootEl, deck, phoneStageEl, state, debug) {
       visible: !shouldHidePhoneStage,
       progress,
     });
+  }
+
+  const shouldShowProjectsSlider = progress >= PROJECTS_SLIDER_ACTIVE_PROGRESS;
+  if (shouldShowProjectsSlider !== state.isProjectsVisible) {
+    phoneStageEl.classList.toggle("is-projects-visible", shouldShowProjectsSlider);
+    state.isProjectsVisible = shouldShowProjectsSlider;
   }
 }
 
@@ -107,6 +121,7 @@ export function usePortfolioInteractions({ deckRef, phoneStageRef }) {
     const state = {
       isWheelGestureConsumed: false,
       isPhoneStageHidden: false,
+      isProjectsVisible: false,
       lastActiveIndex: -1,
     };
 
@@ -353,6 +368,8 @@ export function usePortfolioInteractions({ deckRef, phoneStageRef }) {
 
       rootEl.style.setProperty("--hero-about-progress", "0");
       rootEl.style.setProperty("--about-experience-progress", "0");
+      rootEl.style.setProperty("--experience-projects-progress", "0");
+      phoneStageEl?.classList.remove("is-hidden", "is-projects-visible");
     };
   }, [deckRef, phoneStageRef]);
 }
