@@ -5,6 +5,8 @@ import convayLogoImage from "../assets/project_images/convay_logo.webp";
 import convayAppImage from "../assets/project_images/convay_app.png";
 import skootelLogoImage from "../assets/project_images/skootel_logo.webp";
 import skootelAppImage from "../assets/project_images/skootel_app.png";
+import magnusaiGifImage from "../assets/project_images/magnusai.gif";
+import magnusaiLogoImage from "../assets/project_images/magnusAI_logo.jpg";
 
 export const NAV_ITEMS = [
   { href: "#about", label: "About" },
@@ -174,8 +176,23 @@ export const PROJECTS = [
     title: "magnusai-chatbot-react-native",
     body: "Reusable React Native chatbot library published for integration flexibility.",
     tags: ["NPM Package", "React Native", "SDK Thinking"],
-    visible: false,
-    images: [],
+    visible: true,
+    images: [
+      {
+        src: magnusaiGifImage,
+        alt: "MagnusAI chatbot demo",
+      },
+      {
+        src: magnusaiLogoImage,
+        alt: "MagnusAI logo",
+        buttons: [
+          {
+            label: "View on NPM",
+            url: "https://www.npmjs.com/package/magnusai-chatbot-react-native?activeTab=readme",
+          },
+        ],
+      },
+    ],
   },
   {
     title: "Imagine Radio",
