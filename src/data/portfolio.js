@@ -7,6 +7,8 @@ import skootelLogoImage from "../assets/project_images/skootel_logo.webp";
 import skootelAppImage from "../assets/project_images/skootel_app.png";
 import magnusaiGifImage from "../assets/project_images/magnusai.gif";
 import magnusaiLogoImage from "../assets/project_images/magnusAI_logo.jpg";
+import kothamalaAppImage from "../assets/project_images/kothamala.png";
+import kothamalaLogoImage from "../assets/project_images/kothamala_logo.png";
 
 export const NAV_ITEMS = [
   { href: "#about", label: "About" },
@@ -195,12 +197,35 @@ export const PROJECTS = [
     ],
   },
   {
+    title: "কথামালা / Kothamala",
+    body: "A Bangla text-to-speech dictionary for searching words and listening to pronunciations.",
+    tags: ["React Native", "Bangla", "Text-to-Speech"],
+    visible: true,
+    images: [
+      {
+        src: kothamalaAppImage,
+        alt: "Kothamala app screenshot",
+      },
+      {
+        src: kothamalaLogoImage,
+        alt: "Kothamala logo",
+        buttons: [
+          {
+            label: "Visit Kothamala",
+            url: "https://kotha-mala.netlify.app/",
+          },
+        ],
+      },
+    ],
+  },
+  {
     title: "Imagine Radio",
     body: "Streaming platform across Android, iOS, and web player experiences.",
     tags: ["React Native", "React.js", "MobX"],
     visible: false,
     images: [],
   },
+
   {
     title: "Pipra Store / Jirabo / Express Ticket",
     body: "Commerce and ticketing apps with checkout, search, and scalable frontend patterns.",
