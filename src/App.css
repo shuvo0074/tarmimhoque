@@ -261,6 +261,8 @@ html.is-fast-about-experience .phone-layer-experience {
 .phone-stage.is-hidden {
   opacity: 0;
   filter: blur(2px);
+  pointer-events: none;
+  visibility: hidden;
 }
 
 .phone-model {
@@ -1039,8 +1041,12 @@ html.is-fast-about-experience .phone-layer-experience {
   display: none;
 }
 
-.phone-stage.is-projects-visible .project-phone-slider {
+.phone-stage.is-projects-visible:not(.is-hidden) .project-phone-slider {
   pointer-events: auto;
+}
+
+.phone-stage.is-hidden .project-phone-slider {
+  pointer-events: none;
 }
 
 .project-phone {
