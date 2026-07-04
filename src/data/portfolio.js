@@ -1,5 +1,9 @@
 // Portfolio content: single source of truth for copy, links, and list data.
 // Views: web and mobile (shared content).
+import convayWebImage from "../assets/project_images/Convay_web.png";
+import convaySplashImage from "../assets/project_images/convay.png";
+import convayAppImage from "../assets/project_images/convay_app.png";
+
 export const NAV_ITEMS = [
   { href: "#about", label: "About" },
   { href: "#experience", label: "Experience" },
@@ -96,31 +100,80 @@ export const EXPERIENCE = {
 
 export const PROJECTS = [
   {
-    title: "Convay",
-    body: "Webinar and meeting solution with WebRTC and Matrix-backed realtime flows.",
+    title: "Convay Web",
+    body: "Enterprise-grade AI meeting solution with video conferencing, WebRTC, and Matrix-backed realtime flows.",
     tags: ["React Native", "WebRTC", "Matrix"],
+    visible: true,
+    images: [
+      {
+        src: convayWebImage,
+        alt: "Convay web landing page",
+      },
+      {
+        src: convaySplashImage,
+        alt: "Convay Logo",
+        buttons: [{ label: "Visit Convay", url: "https://convay.com/" }],
+      },
+    ],
+  },
+  {
+    title: "Convay Mobile App",
+    body: "Cross-platform video conferencing app for organizations, with secure meetings and realtime collaboration on iOS and Android.",
+    tags: ["React Native", "WebRTC", "iOS", "Android"],
+    visible: true,
+    images: [
+      {
+        src: convayAppImage,
+        alt: "Convay mobile app screenshot",
+      },
+      {
+        src: convaySplashImage,
+        alt: "Convay app branding",
+        buttons: [
+          {
+            label: "Play Store",
+            url: "https://play.google.com/store/apps/details?id=org.synesisit.convay",
+          },
+          {
+            label: "App Store",
+            url: "https://apps.apple.com/us/app/convay/id6444846555",
+          },
+        ],
+      },
+    ],
   },
   {
     title: "Skootel / Benji / HFX E-Scooters",
     body: "Ride-sharing apps with geo features, support modules, and production releases.",
     tags: ["React Native", "Redux", "Google Maps"],
+    visible: false,
+    images: [],
   },
   {
     title: "magnusai-chatbot-react-native",
     body: "Reusable React Native chatbot library published for integration flexibility.",
     tags: ["NPM Package", "React Native", "SDK Thinking"],
+    visible: false,
+    images: [],
   },
   {
     title: "Imagine Radio",
     body: "Streaming platform across Android, iOS, and web player experiences.",
     tags: ["React Native", "React.js", "MobX"],
+    visible: false,
+    images: [],
   },
   {
     title: "Pipra Store / Jirabo / Express Ticket",
     body: "Commerce and ticketing apps with checkout, search, and scalable frontend patterns.",
     tags: ["React Native", "Node.js", "E-commerce"],
+    visible: false,
+    images: [],
   },
 ];
+
+/** Projects currently shown in the portfolio UI. */
+export const VISIBLE_PROJECTS = PROJECTS.filter((project) => project.visible);
 
 export const CONTACT = {
   title: "Let's build the next mobile product",

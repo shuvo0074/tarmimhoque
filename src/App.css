@@ -1103,10 +1103,6 @@ html.is-fast-about-experience .phone-layer-experience {
 .project-phone-content {
   position: absolute;
   inset: 2.1rem 0.42rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  padding: 0.2rem 0.15rem;
   border-radius: 0.9rem;
   background:
     radial-gradient(circle at top right, rgba(94, 234, 212, 0.2), transparent 48%),
@@ -1115,17 +1111,40 @@ html.is-fast-about-experience .phone-layer-experience {
   overflow: hidden;
 }
 
-.project-phone-content .phone-bars {
+.project-phone-slides {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  transition: transform 0.45s ease;
+}
+
+.project-phone-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.project-phone-slide-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.2rem 0.15rem;
+}
+
+.project-phone-slide-intro .phone-bars {
   margin-top: 0.15rem;
 }
 
-.project-phone-content .phone-hero-highlight {
+.project-phone-slide-intro .phone-hero-highlight {
   flex: 1;
   align-items: flex-start;
   min-height: 0;
 }
 
-.project-phone-content .phone-hero-title {
+.project-phone-slide-intro .phone-hero-title {
   font-size: 0.78rem;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -1133,11 +1152,87 @@ html.is-fast-about-experience .phone-layer-experience {
   overflow: hidden;
 }
 
-.project-phone-content .phone-hero-subtext {
+.project-phone-slide-intro .phone-hero-subtext {
   display: -webkit-box;
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.project-phone-slide-media {
+  display: flex;
+  flex-direction: column;
+  background: #04070f;
+  padding-bottom: 1.1rem;
+}
+
+.project-phone-image {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.project-phone-actions {
+  position: absolute;
+  left: 0.45rem;
+  right: 0.45rem;
+  bottom: 1.55rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem;
+  z-index: 2;
+}
+
+.project-phone-link {
+  display: grid;
+  place-items: center;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 80%;
+  min-height: 1.45rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid rgba(94, 234, 212, 0.45);
+  background: rgba(6, 12, 20, 0.88);
+  color: var(--accent);
+  font-size: 0.52rem;
+  font-weight: 400;
+  text-decoration: none;
+  backdrop-filter: blur(6px);
+  pointer-events: auto;
+  transition: opacity 0.2s ease;
+}
+
+.project-phone-link:hover,
+.project-phone-link:active {
+  opacity: 0.72;
+}
+
+.project-phone-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 0.28rem;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.28rem;
+  z-index: 3;
+}
+
+.project-phone-dot {
+  width: 0.28rem;
+  height: 0.28rem;
+  border-radius: 50%;
+  background: rgba(148, 163, 184, 0.45);
+}
+
+.project-phone-dot.is-active {
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(94, 234, 212, 0.55);
 }
 
 .project-phone-badge {

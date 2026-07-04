@@ -1,7 +1,7 @@
 // ProjectsSection: selected shipped apps and platforms.
 // Views: web (title + phone slider spacer) and mobile (card fallback).
 import { memo } from "react";
-import { PROJECTS } from "../../data/portfolio";
+import { VISIBLE_PROJECTS } from "../../data/portfolio";
 
 function ProjectsSectionComponent() {
   return (
@@ -12,7 +12,7 @@ function ProjectsSectionComponent() {
         <div className="projects-phone-space" aria-hidden="true"></div>
         <div className="projects-mobile-fallback">
           <div className="project-row">
-            {PROJECTS.map((project) => (
+            {VISIBLE_PROJECTS.map((project) => (
               <article key={project.title} className="project card">
                 <h3>{project.title}</h3>
                 <p>{project.body}</p>
@@ -21,6 +21,17 @@ function ProjectsSectionComponent() {
                     <span key={tag}>{tag}</span>
                   ))}
                 </div>
+                {project.images?.[0]?.buttons?.map((button) => (
+                  <a
+                    key={button.url}
+                    className="button button-ghost"
+                    href={button.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {button.label}
+                  </a>
+                ))}
               </article>
             ))}
           </div>

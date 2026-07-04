@@ -9,7 +9,7 @@ import { ProjectPhoneSlider } from "./ProjectPhoneSlider";
 
 const PhoneStageComponent = forwardRef(function PhoneStageComponent(_, ref) {
   return (
-    <div className="phone-stage" aria-hidden="true" ref={ref}>
+    <div className="phone-stage" ref={ref}>
       <div className="phone-model">
         <ChipCloud />
         <div className="phone-screen">

@@ -1,8 +1,37 @@
-// ProjectPhone: portrait phone card showing one project (About-style screen UI).
+// ProjectPhone: portrait phone card with intro + image slides (auto/hover).
 // Views: web only (inside ProjectPhoneSlider).
-import { memo } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
+
+const SLIDE_INTERVAL_MS = 3000;
 
 function ProjectPhoneComponent({ project, index, total }) {
+  const images = project.images ?? [];
+  const slideCount = 1 + images.length;
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  const goToNextSlide = useCallback(() => {
+    setActiveSlide((current) => (current + 1) % slideCount);
+  }, [slideCount]);
+
+  useEffect(() => {
+    if (slideCount <= 1) return undefined;
+
+    const timerId = window.setInterval(goToNextSlide, SLIDE_INTERVAL_MS);
+    return () => window.clearInterval(timerId);
+  }, [goToNextSlide, slideCount, activeSlide]);
+
+  const handleMouseEnter = () => {
+    if (slideCount <= 1) return;
+
+    // Keep image slides with action buttons steady so the link can be clicked.
+    if (activeSlide > 0) {
+      const currentImage = images[activeSlide - 1];
+      if (currentImage?.buttons?.length > 0) return;
+    }
+
+    goToNextSlide();
+  };
+
   return (
     <article
       className="project-phone"
@@ -10,6 +39,7 @@ function ProjectPhoneComponent({ project, index, total }) {
         "--project-index": index,
         "--project-count": total,
       }}
+      onMouseEnter={handleMouseEnter}
     >
       <div className="project-phone-frame">
         <div className="project-phone-notch">
@@ -18,26 +48,68 @@ function ProjectPhoneComponent({ project, index, total }) {
         </div>
 
         <div className="project-phone-content">
-          <div className="phone-bars">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          <div className="phone-text">Selected work</div>
-          <div className="phone-hero-highlight">
-            <div className="project-phone-badge" aria-hidden="true">
-              {String(index + 1).padStart(2, "0")}
+          <div
+            className="project-phone-slides"
+            style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+          >
+            <div className="project-phone-slide project-phone-slide-intro">
+              <div className="phone-bars">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div className="phone-text">Selected work</div>
+              <div className="phone-hero-highlight">
+                <div className="phone-hero-copy">
+                  <p className="phone-hero-title">{project.title}</p>
+                  <p className="phone-hero-subtext">{project.body}</p>
+                </div>
+              </div>
+              <div className="phone-hero-tech">
+                {project.tags.map((tag) => (
+                  <span key={tag}>{tag}</span>
+                ))}
+              </div>
             </div>
-            <div className="phone-hero-copy">
-              <p className="phone-hero-title">{project.title}</p>
-              <p className="phone-hero-subtext">{project.body}</p>
-            </div>
-          </div>
-          <div className="phone-hero-tech">
-            {project.tags.map((tag) => (
-              <span key={tag}>{tag}</span>
+
+            {images.map((image) => (
+              <div key={image.alt ?? image.src} className="project-phone-slide project-phone-slide-media">
+                <img
+                  className="project-phone-image"
+                  src={image.src}
+                  alt={image.alt ?? project.title}
+                  draggable="false"
+                />
+                {image.buttons?.length > 0 && (
+                  <div className="project-phone-actions">
+                    {image.buttons.map((button) => (
+                      <a
+                        key={button.url}
+                        className="project-phone-link"
+                        href={button.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        {button.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
+
+          {/* {slideCount > 1 && (
+            <div className="project-phone-dots" aria-hidden="true">
+              {Array.from({ length: slideCount }, (_, slideIndex) => (
+                <span
+                  key={slideIndex}
+                  className={`project-phone-dot ${slideIndex === activeSlide ? "is-active" : ""}`}
+                ></span>
+              ))}
+            </div>
+          )} */}
         </div>
 
         <div className="project-phone-gesture"></div>
