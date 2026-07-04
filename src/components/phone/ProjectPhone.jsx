@@ -72,32 +72,50 @@ function ProjectPhoneComponent({ project, index, total }) {
               </div>
             </div>
 
-            {images.map((image) => (
-              <div key={image.alt ?? image.src} className="project-phone-slide project-phone-slide-media">
-                <img
-                  className="project-phone-image"
-                  src={image.src}
-                  alt={image.alt ?? project.title}
-                  draggable="false"
-                />
-                {image.buttons?.length > 0 && (
-                  <div className="project-phone-actions">
-                    {image.buttons.map((button) => (
-                      <a
-                        key={button.url}
-                        className="project-phone-link"
-                        href={button.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={(event) => event.stopPropagation()}
-                      >
-                        {button.label}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+            {images.map((image) => {
+              const isSplash = Boolean(image.buttons?.length);
+
+              return (
+                <div
+                  key={image.alt ?? image.src}
+                  className={`project-phone-slide project-phone-slide-media${isSplash ? " is-splash" : ""}`}
+                >
+                  {isSplash ? (
+                    <div className="project-phone-splash">
+                      <img
+                        className="project-phone-logo"
+                        src={image.src}
+                        alt={image.alt ?? project.title}
+                        draggable="false"
+                      />
+                    </div>
+                  ) : (
+                    <img
+                      className="project-phone-image"
+                      src={image.src}
+                      alt={image.alt ?? project.title}
+                      draggable="false"
+                    />
+                  )}
+                  {isSplash && (
+                    <div className="project-phone-actions">
+                      {image.buttons.map((button) => (
+                        <a
+                          key={button.url}
+                          className="project-phone-link"
+                          href={button.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={(event) => event.stopPropagation()}
+                        >
+                          {button.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* {slideCount > 1 && (

@@ -1,8 +1,10 @@
 // Portfolio content: single source of truth for copy, links, and list data.
 // Views: web and mobile (shared content).
 import convayWebImage from "../assets/project_images/Convay_web.png";
-import convaySplashImage from "../assets/project_images/convay.png";
+import convayLogoImage from "../assets/project_images/convay_logo.webp";
 import convayAppImage from "../assets/project_images/convay_app.png";
+import skootelLogoImage from "../assets/project_images/skootel_logo.webp";
+import skootelAppImage from "../assets/project_images/skootel_app.png";
 
 export const NAV_ITEMS = [
   { href: "#about", label: "About" },
@@ -110,8 +112,8 @@ export const PROJECTS = [
         alt: "Convay web landing page",
       },
       {
-        src: convaySplashImage,
-        alt: "Convay Logo",
+        src: convayLogoImage,
+        alt: "Convay logo",
         buttons: [{ label: "Visit Convay", url: "https://convay.com/" }],
       },
     ],
@@ -127,8 +129,8 @@ export const PROJECTS = [
         alt: "Convay mobile app screenshot",
       },
       {
-        src: convaySplashImage,
-        alt: "Convay app branding",
+        src: convayLogoImage,
+        alt: "Convay logo",
         buttons: [
           {
             label: "Play Store",
@@ -143,11 +145,30 @@ export const PROJECTS = [
     ],
   },
   {
-    title: "Skootel / Benji / HFX E-Scooters",
-    body: "Ride-sharing apps with geo features, support modules, and production releases.",
+    title: "Skootel",
+    body: "Electric scooter sharing app with realtime maps, ride passes, group rides, and local payment flows.",
     tags: ["React Native", "Redux", "Google Maps"],
-    visible: false,
-    images: [],
+    visible: true,
+    images: [
+      {
+        src: skootelAppImage,
+        alt: "Skootel mobile app screenshot",
+      },
+      {
+        src: skootelLogoImage,
+        alt: "Skootel logo",
+        buttons: [
+          {
+            label: "Play Store",
+            url: "https://play.google.com/store/apps/details?id=com.otoride.skootel",
+          },
+          {
+            label: "App Store",
+            url: "https://apps.apple.com/us/app/skootel-scooter-sharing/id6615074657",
+          },
+        ],
+      },
+    ],
   },
   {
     title: "magnusai-chatbot-react-native",
