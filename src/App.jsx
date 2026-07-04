@@ -27,6 +27,29 @@ const CORE_STACK_ITEMS = [
   "WebRTC",
   "CI/CD",
 ];
+const EXPERIENCE_TITLE = "Building mobile products across startups and global teams";
+const EXPERIENCE_ITEMS = [
+  {
+    time: "2021 - Present",
+    title: "Lead Mobile App Developer · Magnushub Ltd.",
+    body: "Leading React Native app maintenance, release workflows, CI/CD, and team task distribution while translating business requirements into stable product features.",
+  },
+  {
+    time: "2024 - 2025",
+    title: "Lead Mobile App Developer (Part-time) · Synesis IT Ltd.",
+    body: "Worked on WebRTC, Jitsi Meet, and Matrix integrations in React Native and modified SwiftUI iOS chat modules for production communication use cases.",
+  },
+  {
+    time: "2020 - 2022",
+    title: "Lead App Developer · Self Aware Machines Pvt. Ltd.",
+    body: "Built meeting-room SDK solutions and web apps using React, GraphQL, Firebase auth, and realtime collaboration technologies for online classroom experiences.",
+  },
+  {
+    time: "2018 - 2021",
+    title: "Software Developer / Engineer · Multiple Teams",
+    body: "Delivered commerce, media, and event apps with React Native, Redux, MobX, Sentry, and push notifications while maintaining agile team processes.",
+  },
+];
 const CHIP_PARTS = [
   { id: "camera", kind: "chip-camera-module", variant: "camera" },
   { id: "board", kind: "chip-motherboard", variant: "board" },
@@ -154,6 +177,9 @@ function ChipPartInner({ variant }) {
 }
 const WHEEL_DEADZONE = 4;
 const WHEEL_GESTURE_SETTLE_MS = 320;
+const ABOUT_PANEL_INDEX = 1;
+const EXPERIENCE_PANEL_INDEX = 2;
+const ABOUT_TO_EXPERIENCE_SCROLL_MS = 280;
 const SCROLL_DEBUG_QUERY_PARAM = "debugScroll";
 const SCROLL_DEBUG_MAX_ENTRIES = 400;
 
@@ -252,17 +278,84 @@ function App() {
       return activeIndex;
     };
 
+    let scrollAnimationFrameId = null;
+    let fastTransitionClearTimerId = null;
+
+    const clearFastAboutExperienceTransition = () => {
+      rootEl?.classList.remove("is-fast-about-experience");
+      if (fastTransitionClearTimerId) {
+        window.clearTimeout(fastTransitionClearTimerId);
+        fastTransitionClearTimerId = null;
+      }
+    };
+
+    const animateScrollTo = (targetLeft, durationMs) => {
+      if (!deck) return;
+
+      if (scrollAnimationFrameId) {
+        window.cancelAnimationFrame(scrollAnimationFrameId);
+        scrollAnimationFrameId = null;
+      }
+
+      const startLeft = deck.scrollLeft;
+      const delta = targetLeft - startLeft;
+      if (Math.abs(delta) < 1) {
+        deck.scrollLeft = targetLeft;
+        return;
+      }
+
+      const startTime = performance.now();
+      const step = (now) => {
+        const t = Math.min(1, (now - startTime) / durationMs);
+        const eased = 1 - (1 - t) ** 3;
+        deck.scrollLeft = startLeft + delta * eased;
+        if (t < 1) {
+          scrollAnimationFrameId = window.requestAnimationFrame(step);
+          return;
+        }
+        scrollAnimationFrameId = null;
+        deck.scrollLeft = targetLeft;
+      };
+
+      scrollAnimationFrameId = window.requestAnimationFrame(step);
+    };
+
     const scrollToPanel = (index) => {
       if (!deck || panels.length === 0) return;
 
       const safeIndex = Math.max(0, Math.min(index, panels.length - 1));
+      const fromIndex = getActivePanelIndex();
+      const isAboutToExperience =
+        fromIndex === ABOUT_PANEL_INDEX && safeIndex === EXPERIENCE_PANEL_INDEX;
+      const targetLeft = panels[safeIndex].offsetLeft;
+
       pushScrollDebugLog("scroll-to-panel", {
         requestedIndex: index,
         safeIndex,
-        left: panels[safeIndex].offsetLeft,
+        fromIndex,
+        isAboutToExperience,
+        left: targetLeft,
       });
+
+      if (isAboutToExperience) {
+        rootEl?.classList.add("is-fast-about-experience");
+        if (fastTransitionClearTimerId) {
+          window.clearTimeout(fastTransitionClearTimerId);
+        }
+        fastTransitionClearTimerId = window.setTimeout(() => {
+          clearFastAboutExperienceTransition();
+        }, ABOUT_TO_EXPERIENCE_SCROLL_MS + 80);
+        animateScrollTo(targetLeft, ABOUT_TO_EXPERIENCE_SCROLL_MS);
+        return;
+      }
+
+      clearFastAboutExperienceTransition();
+      if (scrollAnimationFrameId) {
+        window.cancelAnimationFrame(scrollAnimationFrameId);
+        scrollAnimationFrameId = null;
+      }
       deck.scrollTo({
-        left: panels[safeIndex].offsetLeft,
+        left: targetLeft,
         behavior: "smooth",
       });
     };
@@ -409,7 +502,12 @@ function App() {
         if (!target) return;
 
         event.preventDefault();
-        target.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+        const targetIndex = panels.indexOf(target);
+        if (targetIndex >= 0 && isDesktop()) {
+          scrollToPanel(targetIndex);
+        } else {
+          target.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+        }
         window.history.replaceState(null, "", hash);
       };
 
@@ -452,6 +550,12 @@ function App() {
       if (wheelGestureUnlockTimerId) {
         window.clearTimeout(wheelGestureUnlockTimerId);
       }
+
+      if (scrollAnimationFrameId) {
+        window.cancelAnimationFrame(scrollAnimationFrameId);
+      }
+
+      clearFastAboutExperienceTransition();
 
       if (window.__scrollDebug) {
         delete window.__scrollDebug;
@@ -692,6 +796,20 @@ function App() {
                   </div>
                 </div>
               </div>
+
+              <div className="phone-layer phone-layer-experience">
+                <p className="phone-experience-tag">Experience</p>
+                <h4>{EXPERIENCE_TITLE}</h4>
+                <div className="phone-experience-timeline">
+                  {EXPERIENCE_ITEMS.map((item) => (
+                    <article key={item.time} className="phone-experience-card">
+                      <p className="phone-experience-time">{item.time}</p>
+                      <h5>{item.title}</h5>
+                      <p>{item.body}</p>
+                    </article>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="phone-gesture-bar"></div>
@@ -765,46 +883,18 @@ function App() {
 
         <section id="experience" className="panel">
           <div className="panel-content experience-panel-content">
-            <div className="experience-device">
-              <span className="experience-side-rail"></span>
-              <div className="experience-device-screen">
-                <p className="eyebrow">Experience</p>
-                <h2>Building mobile products across startups and global teams</h2>
-                <div className="timeline">
-                  <article className="timeline-item card" data-tilt-card>
-                    <p className="time">2021 - Present</p>
-                    <h3>Lead Mobile App Developer · Magnushub Ltd.</h3>
-                    <p>
-                      Leading React Native app maintenance, release workflows, CI/CD, and team task
-                      distribution while translating business requirements into stable product
-                      features.
-                    </p>
+            <div className="experience-phone-space" aria-hidden="true"></div>
+            <div className="experience-mobile-fallback">
+              <p className="eyebrow">Experience</p>
+              <h2>{EXPERIENCE_TITLE}</h2>
+              <div className="timeline">
+                {EXPERIENCE_ITEMS.map((item) => (
+                  <article key={item.time} className="timeline-item card">
+                    <p className="time">{item.time}</p>
+                    <h3>{item.title}</h3>
+                    <p>{item.body}</p>
                   </article>
-                  <article className="timeline-item card" data-tilt-card>
-                    <p className="time">2024 - 2025</p>
-                    <h3>Lead Mobile App Developer (Part-time) · Synesis IT Ltd.</h3>
-                    <p>
-                      Worked on WebRTC, Jitsi Meet, and Matrix integrations in React Native and
-                      modified SwiftUI iOS chat modules for production communication use cases.
-                    </p>
-                  </article>
-                  <article className="timeline-item card" data-tilt-card>
-                    <p className="time">2020 - 2022</p>
-                    <h3>Lead App Developer · Self Aware Machines Pvt. Ltd.</h3>
-                    <p>
-                      Built meeting-room SDK solutions and web apps using React, GraphQL, Firebase
-                      auth, and realtime collaboration technologies for online classroom experiences.
-                    </p>
-                  </article>
-                  <article className="timeline-item card" data-tilt-card>
-                    <p className="time">2018 - 2021</p>
-                    <h3>Software Developer / Engineer · Multiple Teams</h3>
-                    <p>
-                      Delivered commerce, media, and event apps with React Native, Redux, MobX,
-                      Sentry, and push notifications while maintaining agile team processes.
-                    </p>
-                  </article>
-                </div>
+                ))}
               </div>
             </div>
           </div>
