@@ -30,24 +30,44 @@ const CORE_STACK_ITEMS = [
 const EXPERIENCE_TITLE = "Building mobile products across startups and global teams";
 const EXPERIENCE_ITEMS = [
   {
-    time: "2021 - Present",
+    time: "Jan 2021 - Present",
     title: "Lead Mobile App Developer · Magnushub Ltd.",
-    body: "Leading React Native app maintenance, release workflows, CI/CD, and team task distribution while translating business requirements into stable product features.",
+    body: "Maintain React Native apps, manage store releases, analyze client requirements, distribute team tasks, and maintain the CI/CD pipeline.",
   },
   {
-    time: "2024 - 2025",
-    title: "Lead Mobile App Developer (Part-time) · Synesis IT Ltd.",
-    body: "Worked on WebRTC, Jitsi Meet, and Matrix integrations in React Native and modified SwiftUI iOS chat modules for production communication use cases.",
+    time: "Jul 2024 - Feb 2025",
+    title: "Lead Mobile App Developer · Synesis IT Ltd.",
+    body: "Part-time role on React Native with WebRTC, Jitsi Meet, and Matrix, plus SwiftUI iOS chat app maintenance.",
   },
   {
-    time: "2020 - 2022",
+    time: "Jul 2020 - Mar 2022",
     title: "Lead App Developer · Self Aware Machines Pvt. Ltd.",
-    body: "Built meeting-room SDK solutions and web apps using React, GraphQL, Firebase auth, and realtime collaboration technologies for online classroom experiences.",
+    body: "Built a React Native meeting-room SDK and React web apps with Firebase, WebRTC, TensorFlow, and GraphQL for AI classrooms.",
   },
   {
-    time: "2018 - 2021",
-    title: "Software Developer / Engineer · Multiple Teams",
-    body: "Delivered commerce, media, and event apps with React Native, Redux, MobX, Sentry, and push notifications while maintaining agile team processes.",
+    time: "Nov 2021 - Feb 2022",
+    title: "Frontend Developer · Bots and People",
+    body: "Contract role building a React.js and WordPress marketplace website for automation products in Germany.",
+  },
+  {
+    time: "Jul 2020 - Jan 2021",
+    title: "Mobile App Developer · Lotus Tech. Development Ltd.",
+    body: "Built React Native e-commerce apps with React-Redux and maintained production release workflows.",
+  },
+  {
+    time: "Jul 2018 - Jun 2020",
+    title: "Software Developer · Imagine Entertainments Ltd.",
+    body: "Shipped React Native apps with Firebase and MobX, store releases, React audio-player front-end, CMS work, and Scrum.",
+  },
+  {
+    time: "Jul 2019 - Mar 2020",
+    title: "Software Engineer · Northern Light Technologies",
+    body: "Prepared React Native e-commerce apps using Firebase, Sentry, and OneSignal.",
+  },
+  {
+    time: "Feb 2018 - Jun 2018",
+    title: "Software Engineer · ERA Infotech Ltd.",
+    body: "Prepared a React Native app for a pharmaceuticals company.",
   },
 ];
 const CHIP_PARTS = [
@@ -802,7 +822,7 @@ function App() {
                 <h4>{EXPERIENCE_TITLE}</h4>
                 <div className="phone-experience-timeline">
                   {EXPERIENCE_ITEMS.map((item) => (
-                    <article key={item.time} className="phone-experience-card">
+                    <article key={item.title} className="phone-experience-card">
                       <p className="phone-experience-time">{item.time}</p>
                       <h5>{item.title}</h5>
                       <p>{item.body}</p>
@@ -889,7 +909,7 @@ function App() {
               <h2>{EXPERIENCE_TITLE}</h2>
               <div className="timeline">
                 {EXPERIENCE_ITEMS.map((item) => (
-                  <article key={item.time} className="timeline-item card">
+                  <article key={item.title} className="timeline-item card">
                     <p className="time">{item.time}</p>
                     <h3>{item.title}</h3>
                     <p>{item.body}</p>
