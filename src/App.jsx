@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { Deck } from "./components/Deck";
 import { Dots } from "./components/Dots";
 import { PhoneStage } from "./components/phone/PhoneStage";
-import { Topbar } from "./components/Topbar";
+// import { Topbar } from "./components/Topbar";
 import { usePortfolioInteractions } from "./hooks/usePortfolioInteractions";
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
   return (
     <>
       <div className="noise"></div>
-      <Topbar />
+      {/* <Topbar /> */}
       <PhoneStage ref={phoneStageRef} />
       <Deck ref={deckRef} />
       <Dots />
