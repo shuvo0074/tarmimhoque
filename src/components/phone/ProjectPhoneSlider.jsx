@@ -1,11 +1,12 @@
 // ProjectPhoneSlider: experience phone splits into a horizontal row of project phones.
-// Autoplay advances one phone at a time through its slides, then moves to the next.
+// Autoplay advances one phone at a time, and only while the projects panel is in view.
 // Views: web only (inside PhoneStage).
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { VISIBLE_PROJECTS } from "../../data/portfolio";
 import { ProjectPhone } from "./ProjectPhone";
 
 const SLIDE_INTERVAL_MS = 3000;
+const PROJECTS_FOCUS_RATIO = 0.55;
 
 function getSlideCount(project) {
   return 1 + (project.images?.length ?? 0);
@@ -17,22 +18,33 @@ function ProjectPhoneSliderComponent() {
     VISIBLE_PROJECTS.map(() => 0)
   );
   const activePhoneRef = useRef(0);
+  const projectsFocusedRef = useRef(false);
 
   useEffect(() => {
-    const stage = document.querySelector(".phone-stage");
-    if (!stage) return undefined;
+    const projectsPanel = document.getElementById("projects");
+    if (!projectsPanel) return undefined;
 
-    const sync = () => {
-      setIsPlaying(
-        stage.classList.contains("is-projects-visible") &&
-          !stage.classList.contains("is-hidden")
-      );
+    const syncPlaying = () => {
+      const shouldPlay = projectsFocusedRef.current && !document.hidden;
+      setIsPlaying((current) => (current === shouldPlay ? current : shouldPlay));
     };
 
-    sync();
-    const observer = new MutationObserver(sync);
-    observer.observe(stage, { attributes: true, attributeFilter: ["class"] });
-    return () => observer.disconnect();
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        projectsFocusedRef.current =
+          entry.isIntersecting && entry.intersectionRatio >= PROJECTS_FOCUS_RATIO;
+        syncPlaying();
+      },
+      { threshold: [0, 0.35, 0.55, 0.75, 1] }
+    );
+
+    observer.observe(projectsPanel);
+    document.addEventListener("visibilitychange", syncPlaying);
+
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", syncPlaying);
+    };
   }, []);
 
   useEffect(() => {
@@ -42,7 +54,6 @@ function ProjectPhoneSliderComponent() {
       let phoneIndex = activePhoneRef.current;
       let guards = 0;
 
-      // Skip phones that have nothing to slide; move focus forward.
       while (
         getSlideCount(VISIBLE_PROJECTS[phoneIndex]) <= 1 &&
         guards < VISIBLE_PROJECTS.length
@@ -59,7 +70,6 @@ function ProjectPhoneSliderComponent() {
         const nextSlide = (prev[phoneIndex] + 1) % slideCount;
         next[phoneIndex] = nextSlide;
 
-        // After a full loop on this phone, hand off to the next one.
         if (nextSlide === 0) {
           activePhoneRef.current = (phoneIndex + 1) % VISIBLE_PROJECTS.length;
         } else {
@@ -74,6 +84,8 @@ function ProjectPhoneSliderComponent() {
   }, [isPlaying]);
 
   const advancePhone = useCallback((phoneIndex) => {
+    if (!isPlaying) return;
+
     const slideCount = getSlideCount(VISIBLE_PROJECTS[phoneIndex]);
     if (slideCount <= 1) return;
 
@@ -83,7 +95,7 @@ function ProjectPhoneSliderComponent() {
       next[phoneIndex] = (prev[phoneIndex] + 1) % slideCount;
       return next;
     });
-  }, []);
+  }, [isPlaying]);
 
   return (
     <div className="project-phone-slider">
