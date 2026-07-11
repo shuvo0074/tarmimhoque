@@ -2,7 +2,7 @@
 // Views: web and mobile.
 import { useRef } from "react";
 import { Deck } from "./components/Deck";
-import { Dots } from "./components/Dots";
+// import { Dots } from "./components/Dots";
 import { PhoneStage } from "./components/phone/PhoneStage";
 // import { Topbar } from "./components/Topbar";
 import { usePortfolioInteractions } from "./hooks/usePortfolioInteractions";
@@ -19,7 +19,7 @@ function App() {
       {/* <Topbar /> */}
       <PhoneStage ref={phoneStageRef} />
       <Deck ref={deckRef} />
-      <Dots />
+      {/* <Dots /> */}
     </>
   );
 }
