@@ -1,24 +1,16 @@
-// ProjectPhone: portrait phone card with intro + image slides (auto/hover).
+// ProjectPhone: portrait phone card with intro + image slides (controlled autoplay).
 // Views: web only (inside ProjectPhoneSlider).
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo } from "react";
 
-const SLIDE_INTERVAL_MS = 3000;
-
-function ProjectPhoneComponent({ project, index, total }) {
+function ProjectPhoneComponent({
+  project,
+  index,
+  total,
+  activeSlide,
+  onAdvance,
+}) {
   const images = project.images ?? [];
   const slideCount = 1 + images.length;
-  const [activeSlide, setActiveSlide] = useState(0);
-
-  const goToNextSlide = useCallback(() => {
-    setActiveSlide((current) => (current + 1) % slideCount);
-  }, [slideCount]);
-
-  useEffect(() => {
-    if (slideCount <= 1) return undefined;
-
-    const timerId = window.setInterval(goToNextSlide, SLIDE_INTERVAL_MS);
-    return () => window.clearInterval(timerId);
-  }, [goToNextSlide, slideCount, activeSlide]);
 
   const handleMouseEnter = () => {
     if (slideCount <= 1) return;
@@ -29,7 +21,7 @@ function ProjectPhoneComponent({ project, index, total }) {
       if (currentImage?.buttons?.length > 0) return;
     }
 
-    goToNextSlide();
+    onAdvance?.();
   };
 
   return (
@@ -86,6 +78,8 @@ function ProjectPhoneComponent({ project, index, total }) {
                         className="project-phone-logo"
                         src={image.src}
                         alt={image.alt ?? project.title}
+                        loading="lazy"
+                        decoding="async"
                         draggable="false"
                       />
                     </div>
@@ -94,6 +88,8 @@ function ProjectPhoneComponent({ project, index, total }) {
                       className="project-phone-image"
                       src={image.src}
                       alt={image.alt ?? project.title}
+                      loading="lazy"
+                      decoding="async"
                       draggable="false"
                     />
                   )}
@@ -117,17 +113,6 @@ function ProjectPhoneComponent({ project, index, total }) {
               );
             })}
           </div>
-
-          {/* {slideCount > 1 && (
-            <div className="project-phone-dots" aria-hidden="true">
-              {Array.from({ length: slideCount }, (_, slideIndex) => (
-                <span
-                  key={slideIndex}
-                  className={`project-phone-dot ${slideIndex === activeSlide ? "is-active" : ""}`}
-                ></span>
-              ))}
-            </div>
-          )} */}
         </div>
 
         <div className="project-phone-gesture"></div>
