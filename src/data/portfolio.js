@@ -38,7 +38,7 @@ export const PROFILE = {
 
 export const HERO = {
   motto: "Observant . Analytical . Committed",
-  lead: 'I build fast, scalable mobile apps and websites with JavaScript—mostly powered by React Native. I enjoy turning "that sounds complicated" into "wow, that just works."',
+  lead: 'Lead React Native Developer building cross-platform mobile applications across fintech, AI, ride-sharing, healthcare, communication, and e-commerce. Skilled in leading engineering teams, designing scalable solutions, managing App Store and Google Play releases, implementing CI/CD pipelines, and collaborating with global clients',
   meta: ["Dhaka, Bangladesh", "9+ years in software", "1000+ LinkedIn followers"],
 };
 

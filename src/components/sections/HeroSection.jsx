@@ -10,7 +10,6 @@ function HeroSectionComponent() {
         <div className="hero-copy">
           <p className="hero-motto">{HERO.motto}</p>
           <h1>{PROFILE.name}</h1>
-          <p className="eyebrow">{PROFILE.role}</p>
           <p className="lead">{HERO.lead}</p>
           <div className="hero-meta">
             {HERO.meta.map((item) => (
