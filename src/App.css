@@ -1807,41 +1807,58 @@ html.is-fast-about-experience .phone-layer-experience {
   pointer-events: none;
 }
 
-.scroll-hint-arrow {
+.scroll-hint-stack {
   position: absolute;
   top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
   width: 3.15rem;
-  height: 3.15rem;
   color: var(--accent);
-  opacity: 0.72;
-  animation: scroll-hint-bounce 1.55s ease-in-out infinite;
 }
 
-.scroll-hint-arrow svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  filter: drop-shadow(0 0 10px rgba(94, 234, 212, 0.35));
-}
-
-.scroll-hint-arrow--left {
+.scroll-hint-stack--left {
   left: 1.4rem;
 }
 
-.scroll-hint-arrow--right {
+.scroll-hint-stack--right {
   right: 1.4rem;
-  animation-delay: 0.22s;
 }
 
-@keyframes scroll-hint-bounce {
+.scroll-hint-chevron {
+  display: block;
+  width: 100%;
+  height: 1.05rem;
+  margin-top: -0.28rem;
+  opacity: 0.18;
+  animation: scroll-hint-cascade 1.8s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.28s);
+}
+
+.scroll-hint-chevron:first-child {
+  margin-top: 0;
+}
+
+.scroll-hint-chevron svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 0 8px rgba(94, 234, 212, 0.35));
+}
+
+@keyframes scroll-hint-cascade {
   0%,
   100% {
-    transform: translateY(-50%);
-    opacity: 0.35;
+    opacity: 0.15;
   }
-  50% {
-    transform: translateY(calc(-50% + 0.55rem));
-    opacity: 0.9;
+  20%,
+  35% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 0.2;
   }
 }
 
@@ -1939,11 +1956,11 @@ html.is-fast-about-experience .phone-layer-experience {
     display: none;
   }
 
-  .scroll-hint-arrow--left {
+  .scroll-hint-stack--left {
     left: 1rem;
   }
 
-  .scroll-hint-arrow--right {
+  .scroll-hint-stack--right {
     right: 1rem;
   }
 
