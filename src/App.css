@@ -1800,6 +1800,106 @@ html.is-fast-about-experience .phone-layer-experience {
   color: var(--accent);
 }
 
+.scroll-hint {
+  position: fixed;
+  inset: 0;
+  z-index: 11;
+  pointer-events: none;
+}
+
+.scroll-hint-arrow {
+  position: absolute;
+  top: 50%;
+  width: 3.15rem;
+  height: 3.15rem;
+  color: var(--accent);
+  opacity: 0.72;
+  animation: scroll-hint-bounce 1.55s ease-in-out infinite;
+}
+
+.scroll-hint-arrow svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 0 10px rgba(94, 234, 212, 0.35));
+}
+
+.scroll-hint-arrow--left {
+  left: 1.4rem;
+}
+
+.scroll-hint-arrow--right {
+  right: 1.4rem;
+  animation-delay: 0.22s;
+}
+
+@keyframes scroll-hint-bounce {
+  0%,
+  100% {
+    transform: translateY(-50%);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(calc(-50% + 0.55rem));
+    opacity: 0.9;
+  }
+}
+
+.back-to-top {
+  position: fixed;
+  right: 1.4rem;
+  bottom: 1.6rem;
+  z-index: 14;
+  width: 3.4375rem;
+  height: 3.4375rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(7, 11, 19, 0.72);
+  backdrop-filter: blur(10px);
+  color: var(--accent);
+  text-decoration: none;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(0.4rem);
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s ease,
+    border-color 0.22s ease,
+    background 0.22s ease;
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+  animation: back-to-top-blink 1.55s ease-in-out infinite;
+}
+
+.back-to-top:hover {
+  border-color: var(--accent);
+  background: rgba(8, 18, 28, 0.88);
+  animation: none;
+  opacity: 1;
+}
+
+.back-to-top svg {
+  width: 1.6875rem;
+  height: 1.6875rem;
+  display: block;
+}
+
+@keyframes back-to-top-blink {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 .dots {
   position: fixed;
   right: 1rem;
@@ -1837,6 +1937,19 @@ html.is-fast-about-experience .phone-layer-experience {
   .topbar-links,
   .dots {
     display: none;
+  }
+
+  .scroll-hint-arrow--left {
+    left: 1rem;
+  }
+
+  .scroll-hint-arrow--right {
+    right: 1rem;
+  }
+
+  .back-to-top {
+    right: 1rem;
+    bottom: 1.2rem;
   }
 
   .phone-stage {
