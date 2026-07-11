@@ -37,6 +37,7 @@ export const PROFILE = {
 };
 
 export const HERO = {
+  motto: "Observant . Analytical . Committed",
   lead: 'I build fast, scalable mobile apps and websites with JavaScript—mostly powered by React Native. I enjoy turning "that sounds complicated" into "wow, that just works."',
   meta: ["Dhaka, Bangladesh", "9+ years in software", "1000+ LinkedIn followers"],
 };
