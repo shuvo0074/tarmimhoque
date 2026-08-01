@@ -4,7 +4,7 @@
 import { memo, useEffect, useRef, useState } from "react";
 
 const SWIPE_THRESHOLD_PX = 40;
-const SLIDE_INTERVAL_MS = 3000;
+const SLIDE_INTERVAL_MS = 4000;
 const VISIBLE_RATIO = 0.45;
 
 function ProjectPhoneComponent({

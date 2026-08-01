@@ -6,7 +6,7 @@ import { VISIBLE_PROJECTS } from "../../data/portfolio";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { ProjectPhone } from "./ProjectPhone";
 
-const SLIDE_INTERVAL_MS = 3000;
+const SLIDE_INTERVAL_MS = 4000;
 
 function getSlideCount(project) {
   return 1 + (project.images?.length ?? 0);
