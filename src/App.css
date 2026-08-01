@@ -1974,12 +1974,8 @@ html.is-fast-about-experience .phone-layer-experience {
     display: none;
   }
 
-  .scroll-hint-stack--left {
-    left: 1rem;
-  }
-
-  .scroll-hint-stack--right {
-    right: 1rem;
+  .scroll-hint {
+    display: none;
   }
 
   .back-to-top {
