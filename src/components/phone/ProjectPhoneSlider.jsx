@@ -1,18 +1,19 @@
-// ProjectPhoneSlider: experience phone splits into a horizontal row of project phones.
-// Autoplay advances one phone at a time, and only while the projects panel is in view.
-// Views: web only (inside PhoneStage).
+// ProjectPhoneSlider: project phones with autoplay.
+// Web: sequential autoplay while projects panel is in view.
+// Mobile: each phone autoplays independently only while that phone is visible.
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { VISIBLE_PROJECTS } from "../../data/portfolio";
+import { useIsMobile } from "../../hooks/useIsMobile";
 import { ProjectPhone } from "./ProjectPhone";
 
 const SLIDE_INTERVAL_MS = 3000;
-const PROJECTS_FOCUS_RATIO = 0.55;
 
 function getSlideCount(project) {
   return 1 + (project.images?.length ?? 0);
 }
 
 function ProjectPhoneSliderComponent() {
+  const isMobile = useIsMobile();
   const [isPlaying, setIsPlaying] = useState(false);
   const [slideByPhone, setSlideByPhone] = useState(() =>
     VISIBLE_PROJECTS.map(() => 0)
@@ -21,6 +22,8 @@ function ProjectPhoneSliderComponent() {
   const projectsFocusedRef = useRef(false);
 
   useEffect(() => {
+    if (isMobile) return undefined;
+
     const projectsPanel = document.getElementById("projects");
     if (!projectsPanel) return undefined;
 
@@ -32,7 +35,7 @@ function ProjectPhoneSliderComponent() {
     const observer = new IntersectionObserver(
       ([entry]) => {
         projectsFocusedRef.current =
-          entry.isIntersecting && entry.intersectionRatio >= PROJECTS_FOCUS_RATIO;
+          entry.isIntersecting && entry.intersectionRatio >= 0.55;
         syncPlaying();
       },
       { threshold: [0, 0.35, 0.55, 0.75, 1] }
@@ -45,10 +48,10 @@ function ProjectPhoneSliderComponent() {
       observer.disconnect();
       document.removeEventListener("visibilitychange", syncPlaying);
     };
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
-    if (!isPlaying) return undefined;
+    if (isMobile || !isPlaying) return undefined;
 
     const timerId = window.setInterval(() => {
       let phoneIndex = activePhoneRef.current;
@@ -81,21 +84,19 @@ function ProjectPhoneSliderComponent() {
     }, SLIDE_INTERVAL_MS);
 
     return () => window.clearInterval(timerId);
-  }, [isPlaying]);
+  }, [isMobile, isPlaying]);
 
-  const advancePhone = useCallback((phoneIndex) => {
-    if (!isPlaying) return;
-
+  const stepPhone = useCallback((phoneIndex, direction) => {
     const slideCount = getSlideCount(VISIBLE_PROJECTS[phoneIndex]);
     if (slideCount <= 1) return;
 
     activePhoneRef.current = phoneIndex;
     setSlideByPhone((prev) => {
       const next = [...prev];
-      next[phoneIndex] = (prev[phoneIndex] + 1) % slideCount;
+      next[phoneIndex] = (prev[phoneIndex] + direction + slideCount) % slideCount;
       return next;
     });
-  }, [isPlaying]);
+  }, []);
 
   return (
     <div className="project-phone-slider">
@@ -105,8 +106,10 @@ function ProjectPhoneSliderComponent() {
           project={project}
           index={index}
           total={VISIBLE_PROJECTS.length}
+          independent={isMobile}
           activeSlide={slideByPhone[index]}
-          onAdvance={() => advancePhone(index)}
+          onAdvance={() => stepPhone(index, 1)}
+          onRetreat={() => stepPhone(index, -1)}
         />
       ))}
     </div>
