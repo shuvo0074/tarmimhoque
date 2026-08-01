@@ -1767,6 +1767,13 @@ html.is-fast-about-experience .phone-layer-experience {
   line-height: 1.55;
 }
 
+.project-card-actions {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
 .chip-group {
   margin-top: 1rem;
   display: flex;
