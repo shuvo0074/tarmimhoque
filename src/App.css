@@ -356,7 +356,7 @@ h3 {
 .phone3d-screen {
   position: relative;
   overflow: hidden;
-  border-radius: 34px;
+  /* border-radius is set inline from the 3D glass size (PhoneScreens.jsx). */
   background: radial-gradient(circle at top right, rgba(94, 234, 212, 0.2), rgba(4, 7, 15, 0.8) 58%);
 }
 
@@ -369,7 +369,6 @@ h3 {
 .phone3d-screen.is-landscape {
   width: 1060px;
   height: 502px;
-  border-radius: 30px;
   opacity: clamp(
     0,
     calc((var(--about-experience-progress) - 0.3) * 2.8 - var(--experience-projects-progress) * 5.5),
@@ -382,9 +381,10 @@ h3 {
   inset: 2.6rem 0.4rem 1.3rem;
 }
 
-/* The notch sits on the right once the phone turns landscape. */
+/* The notch sits on the right once the phone turns landscape; keep cards clear of it
+   and of the large rounded corners. */
 .phone3d-screen.is-landscape .phone-layer-experience {
-  padding: 1.7rem 3.4rem 1.5rem 2rem;
+  padding: 1.9rem 4.8rem 1.9rem 2.6rem;
 }
 
 .phone-stage.is-hidden {

@@ -10,6 +10,10 @@ import { SCREEN } from "./geometry";
 export const PORTRAIT_PX_PER_UNIT = 300 / SCREEN.width;
 export const LANDSCAPE_PX_PER_UNIT = 1060 / SCREEN.height;
 
+// Match the 3D glass corners exactly so content never pokes past the rounded screen.
+const PORTRAIT_STYLE = { borderRadius: SCREEN.cornerRadius * PORTRAIT_PX_PER_UNIT };
+const LANDSCAPE_STYLE = { borderRadius: SCREEN.cornerRadius * LANDSCAPE_PX_PER_UNIT };
+
 function PhoneScreensComponent({ screenRefs }) {
   const { viewRef, cameraRef, portraitRef, landscapeRef } = screenRefs;
 
@@ -17,7 +21,7 @@ function PhoneScreensComponent({ screenRefs }) {
     <div className="phone3d-view" ref={viewRef}>
       <div className="phone3d-camera" ref={cameraRef}>
         <div className="phone3d-anchor" ref={portraitRef}>
-          <div className="phone3d-screen is-portrait">
+          <div className="phone3d-screen is-portrait" style={PORTRAIT_STYLE}>
             <div className="phone3d-screen-content">
               <div className="phone-layer phone-layer-circuit">
                 <div className="phone-circuit-scene">
@@ -32,7 +36,7 @@ function PhoneScreensComponent({ screenRefs }) {
         </div>
 
         <div className="phone3d-anchor" ref={landscapeRef}>
-          <div className="phone3d-screen is-landscape">
+          <div className="phone3d-screen is-landscape" style={LANDSCAPE_STYLE}>
             <PhoneExperienceLayer />
             <div className="phone-glow"></div>
           </div>
