@@ -86,9 +86,12 @@ const VARIANT_MARKUP = {
   ),
 };
 
-function ChipPartComponent({ id, kind, variant }) {
+function ChipPartComponent({ id, kind, variant, delay = 0 }) {
   return (
-    <span className={`chip-fragment ${id} ${kind} is-${variant}`}>
+    <span
+      className={`chip-fragment ${id} ${kind} is-${variant}`}
+      style={{ "--chip-delay": delay }}
+    >
       {VARIANT_MARKUP[variant] ?? VARIANT_MARKUP.ic}
     </span>
   );

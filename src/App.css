@@ -130,6 +130,10 @@ body {
   display: none;
 }
 
+.deck.is-animating {
+  scroll-snap-type: none;
+}
+
 .panel {
   width: 100vw;
   min-width: 100vw;
@@ -241,6 +245,39 @@ h3 {
   min-height: 34rem;
 }
 
+/* First-load entrance: hero lines rise in one after another. */
+.hero-copy > * {
+  animation: hero-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.hero-copy > :nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.hero-copy > :nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.hero-copy > :nth-child(3) {
+  animation-delay: 0.25s;
+}
+
+.hero-copy > :nth-child(4) {
+  animation-delay: 0.35s;
+}
+
+.hero-copy > :nth-child(5) {
+  animation-delay: 0.45s;
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+    filter: blur(4px);
+  }
+}
+
 .phone-stage {
   position: fixed;
   top: 52%;
@@ -257,16 +294,97 @@ h3 {
     );
   pointer-events: none;
   opacity: 1;
-  transition: transform 0.35s ease, opacity 0.35s ease, filter 0.35s ease;
+  /* Scroll-linked transforms are written every frame; only the hide/show toggle is transitioned. */
+  transition:
+    opacity 0.35s ease,
+    filter 0.35s ease,
+    visibility 0.35s;
+  animation: stage-enter 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s backwards;
 }
 
-html.is-fast-about-experience .phone-stage,
-html.is-fast-about-experience .phone-model,
-html.is-fast-about-experience .phone-screen-content,
-html.is-fast-about-experience .phone-layer-about-composite,
-html.is-fast-about-experience .phone-layer-experience {
-  transition-duration: 0.44s;
-  transition-timing-function: ease-out;
+@keyframes stage-enter {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+
+/* WebGL phone (components/phone3d): full-viewport canvas under the project slider. */
+.phone-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 12;
+  pointer-events: none;
+  transition:
+    opacity 0.35s ease,
+    visibility 0.35s;
+  animation: stage-enter 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s backwards;
+}
+
+.phone-scene.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* The 3D phone fades as it recedes behind the project phones. */
+.phone-scene canvas {
+  opacity: clamp(0, calc(1 - (var(--experience-projects-progress) - 0.08) * 3), 1);
+}
+
+/* Screen content projected onto the 3D glass (phone3d/cssProjection.js sets the matrices). */
+.phone3d-view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.phone3d-camera {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-style: preserve-3d;
+}
+
+.phone3d-anchor {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.phone3d-screen {
+  position: relative;
+  overflow: hidden;
+  border-radius: 34px;
+  background: radial-gradient(circle at top right, rgba(94, 234, 212, 0.2), rgba(4, 7, 15, 0.8) 58%);
+}
+
+.phone3d-screen.is-portrait {
+  width: 300px;
+  height: 636px;
+  opacity: clamp(0, calc(1 - var(--about-experience-progress) * 2.8), 1);
+}
+
+.phone3d-screen.is-landscape {
+  width: 1060px;
+  height: 502px;
+  border-radius: 30px;
+  opacity: clamp(
+    0,
+    calc((var(--about-experience-progress) - 0.3) * 2.8 - var(--experience-projects-progress) * 5.5),
+    1
+  );
+}
+
+.phone3d-screen-content {
+  position: absolute;
+  inset: 2.6rem 0.4rem 1.3rem;
+}
+
+/* The notch sits on the right once the phone turns landscape. */
+.phone3d-screen.is-landscape .phone-layer-experience {
+  padding: 1.7rem 3.4rem 1.5rem 2rem;
 }
 
 .phone-stage.is-hidden {
@@ -295,7 +413,8 @@ html.is-fast-about-experience .phone-layer-experience {
   background: linear-gradient(140deg, rgba(12, 22, 39, 0.96), rgba(8, 13, 22, 0.9));
   box-shadow: var(--shadow);
   transform-style: preserve-3d;
-  opacity: calc(1 - var(--experience-projects-progress));
+  /* Fade out early so the project phones never draw on top of a half-visible landscape phone. */
+  opacity: clamp(0, calc(1 - (var(--experience-projects-progress) - 0.05) * 2.5), 1);
   transform:
     translate3d(
       0,
@@ -311,13 +430,6 @@ html.is-fast-about-experience .phone-layer-experience {
           var(--experience-projects-progress) * 0.35
       )
     );
-  transition:
-    transform 0.28s ease-out,
-    opacity 0.3s ease,
-    width 0.28s ease-out,
-    aspect-ratio 0.28s ease-out,
-    border-radius 0.28s ease-out,
-    padding 0.28s ease-out;
   pointer-events: none;
 }
 
@@ -332,20 +444,24 @@ html.is-fast-about-experience .phone-layer-experience {
   --tx: 0px;
   --ty: 0px;
   --rot: 0deg;
+  --chip-delay: 0;
+  /* Each part starts a little later, so they arrive one after another instead of in a block. */
+  --chip-progress: clamp(0, calc((var(--hero-about-progress) - var(--chip-delay)) / 0.7), 1);
   position: absolute;
   left: 50%;
   top: 50%;
   display: block;
   overflow: hidden;
-  opacity: calc(0.96 - var(--hero-about-progress) * 0.96);
+  /* Stay visible for most of the flight and only fade as the part reaches the phone. */
+  opacity: clamp(0, calc((1 - var(--chip-progress)) * 3), 0.96);
   transform:
     translate(
-      calc(-50% + var(--tx) * (1 - var(--hero-about-progress))),
-      calc(-50% + var(--ty) * (1 - var(--hero-about-progress)))
+      calc(-50% + var(--tx) * (1 - var(--chip-progress))),
+      calc(-50% + var(--ty) * (1 - var(--chip-progress)))
     )
-    rotate(calc(var(--rot) * (1 - var(--hero-about-progress))))
+    rotate(calc(var(--rot) * (1 - var(--chip-progress))))
+    scale(calc(1 - var(--chip-progress) * 0.35))
     translateZ(0);
-  transition: transform 0.28s ease, opacity 0.24s ease;
   box-shadow:
     0 0.35rem 0.8rem rgba(0, 0, 0, 0.45),
     0 0 0 1px rgba(255, 255, 255, 0.06) inset;
@@ -977,7 +1093,6 @@ html.is-fast-about-experience .phone-layer-experience {
     calc(1.2rem - var(--about-experience-progress) * 0.35rem);
   transform: none;
   transform-origin: center;
-  transition: inset 0.28s ease, transform 0.28s ease, opacity 0.28s ease;
 }
 
 .phone-layer {
@@ -987,10 +1102,15 @@ html.is-fast-about-experience .phone-layer-experience {
   z-index: 1;
 }
 
+/*
+ * Screen layers hand over in sequence (out, then in) rather than cross-fading,
+ * so two layers of text are never legible on top of each other.
+ */
 .phone-layer-circuit {
-  opacity: calc(1 - var(--hero-about-progress));
-  transform: translateY(calc(var(--hero-about-progress) * -10px));
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  opacity: clamp(0, calc(1 - var(--hero-about-progress) * 2.2), 1);
+  transform:
+    translateY(calc(var(--hero-about-progress) * -14px))
+    scale(calc(1 - var(--hero-about-progress) * 0.08));
   pointer-events: none;
 }
 
@@ -1001,11 +1121,12 @@ html.is-fast-about-experience .phone-layer-experience {
   padding-top: 0.35rem;
   opacity: clamp(
     0,
-    calc((var(--hero-about-progress) - 0.35) * 2.4 - var(--about-experience-progress) * 2.2),
+    calc((var(--hero-about-progress) - 0.5) * 2.5 - var(--about-experience-progress) * 3.5),
     1
   );
-  transform: translateY(calc((1 - var(--hero-about-progress)) * 16px));
-  transition: opacity 0.28s ease, transform 0.28s ease;
+  transform: translateY(
+    calc((1 - var(--hero-about-progress)) * 18px - var(--about-experience-progress) * 14px)
+  );
   overflow-y: auto;
   scrollbar-width: none;
   pointer-events: none;
@@ -1019,12 +1140,11 @@ html.is-fast-about-experience .phone-layer-experience {
   opacity: clamp(
     0,
     calc(
-      (var(--about-experience-progress) - 0.28) * 2.4 - var(--experience-projects-progress) * 2.4
+      (var(--about-experience-progress) - 0.38) * 2.6 - var(--experience-projects-progress) * 4
     ),
     1
   );
-  transform: translateY(calc((1 - var(--about-experience-progress)) * 18px));
-  transition: opacity 0.28s ease, transform 0.28s ease;
+  transform: translateY(calc((1 - var(--about-experience-progress)) * 22px));
   overflow: hidden;
   pointer-events: none;
 }
@@ -1042,9 +1162,8 @@ html.is-fast-about-experience .phone-layer-experience {
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
-  opacity: clamp(0, calc((var(--experience-projects-progress) - 0.12) * 1.8), 1);
+  opacity: clamp(0, calc((var(--experience-projects-progress) - 0.3) * 2.2), 1);
   transform: scale(calc(0.82 + var(--experience-projects-progress) * 0.18));
-  transition: opacity 0.28s ease, transform 0.28s ease;
   pointer-events: none;
 }
 
@@ -1070,7 +1189,6 @@ html.is-fast-about-experience .phone-layer-experience {
     rotateY(calc((var(--project-index) - (var(--project-count) - 1) / 2) * (1 - var(--experience-projects-progress)) * -8deg))
     scale(calc(0.52 + var(--experience-projects-progress) * 0.48));
   opacity: clamp(0.15, var(--experience-projects-progress), 1);
-  transition: transform 0.32s ease-out, opacity 0.28s ease;
 }
 
 .project-phone-frame {
@@ -1132,7 +1250,7 @@ html.is-fast-about-experience .phone-layer-experience {
   display: flex;
   height: 100%;
   width: 100%;
-  transition: transform 0.45s ease;
+  transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .project-phone-slide {
@@ -1962,6 +2080,21 @@ html.is-fast-about-experience .phone-layer-experience {
   background: var(--accent);
   border-color: var(--accent);
   box-shadow: 0 0 14px rgba(94, 234, 212, 0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-copy > *,
+  .phone-stage,
+  .phone-react-logo,
+  .scroll-hint-chevron,
+  .back-to-top.is-visible,
+  .processor-svg {
+    animation: none;
+  }
+
+  .project-phone-slides {
+    transition: none;
+  }
 }
 
 @media (max-width: 980px) {
